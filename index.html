@@ -151,6 +151,19 @@ footer{border-top:1px solid var(--grain);padding-block:28px 48px;color:var(--dus
 .pctl button[aria-pressed="true"]{background:var(--brass);color:var(--wood)}
 .pctl .sp{flex:1}
 .pip.min .vid{display:none}
+.vctl{display:flex;flex-wrap:wrap;align-items:center;gap:4px;padding:6px;background:var(--wood-3);border-top:1px solid var(--grain);font:600 .72rem var(--body);color:var(--dust)}
+.vctl[hidden]{display:none!important}
+.vctl .lbl{margin-right:2px}
+.vctl button{font:600 .72rem var(--body);border:1px solid var(--grain);background:var(--wood);color:var(--ivory);padding:4px 8px;border-radius:999px;cursor:pointer;font-variant-numeric:tabular-nums}
+.vctl button[aria-pressed="true"]{background:var(--brass);color:var(--wood);border-color:var(--brass)}
+.vctl .sep{width:1px;height:16px;background:var(--grain);margin:0 4px}
+.vctl .loopinfo{color:var(--brass-2);font-variant-numeric:tabular-nums;margin-left:2px}
+.dice{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--brass);background:transparent;color:var(--brass-2);padding:8px 14px;border-radius:999px;cursor:pointer;font:700 .88rem var(--body);transition:background .2s,color .2s}
+.dice:hover{background:var(--brass);color:var(--wood)}
+.dice svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8}
+.dice svg circle{fill:currentColor;stroke:none}
+@media (prefers-reduced-motion:no-preference){ .dice.roll svg{animation:roll .5s cubic-bezier(.3,.7,.3,1)} }
+@keyframes roll{from{transform:rotate(-200deg) scale(.7)}to{transform:none}}
 .novid{color:#ddd;font-size:.85rem;padding:14px;aspect-ratio:16/9;display:grid;place-content:center;text-align:center;gap:6px}
 
 @media (max-width:760px){
@@ -184,6 +197,7 @@ footer{border-top:1px solid var(--grain);padding-block:28px 48px;color:var(--dus
       <input id="q" type="search" placeholder="Busca una canción o un artista" autocomplete="off" aria-label="Buscar">
     </label>
     <div class="chips" role="group" aria-label="Filtros" id="chips"></div>
+    <button class="dice" id="dice" title="Abre una canción al azar entre las que se ven en el listado"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="4"/><circle cx="8.5" cy="8.5" r="1.5"/><circle cx="15.5" cy="15.5" r="1.5"/><circle cx="12" cy="12" r="1.5"/></svg>Sorpréndeme</button>
   </div>
 </div>
 
@@ -203,6 +217,7 @@ footer{border-top:1px solid var(--grain);padding-block:28px 48px;color:var(--dus
     <span id="p-av"></span>
     <div class="ttlbox"><h2 id="p-title"></h2><div class="who" id="p-who"></div></div>
     <div class="src" id="p-src" role="group" aria-label="Fuente de acordes"></div>
+    <button class="pbtn" id="p-dice" title="Otra canción al azar">Otra al azar</button>
     <a class="pbtn" id="p-open" target="_blank" rel="noopener">Abrir en otra pestaña</a>
     <button class="pbtn close" id="p-close" aria-label="Volver al listado">✕</button>
   </div>
@@ -215,6 +230,17 @@ footer{border-top:1px solid var(--grain);padding-block:28px 48px;color:var(--dus
         <button id="pip-size">Tamaño</button>
         <button id="pip-move">Mover</button>
         <button id="pip-min" aria-pressed="false">Ocultar</button>
+      </div>
+      <div class="vctl" id="vctl" hidden>
+        <span class="lbl">Velocidad</span>
+        <button data-rate="0.5">0,5×</button><button data-rate="0.75">0,75×</button><button data-rate="1" aria-pressed="true">1×</button>
+        <span class="sep"></span>
+        <button id="v-back" title="Retroceder 5 segundos">−5 s</button>
+        <span class="sep"></span>
+        <button id="loop-a" title="Marca el inicio del bucle en el punto actual">Inicio</button>
+        <button id="loop-b" title="Marca el final del bucle en el punto actual">Fin</button>
+        <button id="loop-x" title="Quitar el bucle" hidden>Quitar bucle</button>
+        <span class="loopinfo" id="loop-info"></span>
       </div>
     </div>
   </div>
@@ -290,10 +316,13 @@ function card(g){
     <h4>${esc(g.s)}</h4><div class="feats">${f.join('')}</div><span class="go" aria-hidden="true">${IC.play}</span></a></li>`;
 }
 const artKey = a => norm(a.replace(/^(El|La|Los|Las)\s+/,''));
-function render(){
+function visible(){
   const q = norm(state.q).split(/\s+/).filter(Boolean);
   const fn = FILTERS.find(f=>f[0]===state.f)[2];
-  const rows = DATA.filter(g => fn(g) && (!state.a || g.a===state.a) && q.every(w => g.hay.includes(w)));
+  return DATA.filter(g => fn(g) && (!state.a || g.a===state.a) && q.every(w => g.hay.includes(w)));
+}
+function render(){
+  const rows = visible();
   rows.sort((a,b)=> artKey(a.a).localeCompare(artKey(b.a),'es') || a.s.localeCompare(b.s,'es'));
   const groups = [];
   rows.forEach(g => { const last=groups[groups.length-1]; if (!last || last.a!==g.a) groups.push({a:g.a, items:[g]}); else last.items.push(g); });
@@ -382,15 +411,52 @@ function showSource(g, i){
   if (s.kind==='frame') main.innerHTML = `<iframe class="tabframe" src="${esc(s.u)}" title="Acordes de ${esc(g.s)}" referrerpolicy="no-referrer"></iframe>`;
   else main.innerHTML = `<div class="nolink"><p>${esc(s.label)} no deja mostrar sus páginas dentro de otra web.</p><a class="cta" href="${esc(s.u)}" target="_blank" rel="noopener">Abrir en ${esc(s.label)}</a></div>`;
 }
+/* Reproductor de YouTube con velocidad y bucle */
+let ytReady = null, player = null, loopA = null, loopB = null, loopTimer = null;
+const ytApi = () => ytReady || (ytReady = new Promise((res, rej) => {
+  window.onYouTubeIframeAPIReady = res;
+  const s = document.createElement('script'); s.src = 'https://www.youtube.com/iframe_api'; s.onerror = rej; document.head.appendChild(s);
+  setTimeout(() => rej(new Error('timeout')), 10000);
+}));
+const fmtT = s => `${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
+function resetLoop(){ loopA = loopB = null; $('#loop-x').hidden = true; $('#loop-info').textContent=''; $('#loop-a').setAttribute('aria-pressed','false'); $('#loop-b').setAttribute('aria-pressed','false'); }
+function setRateUI(r){ document.querySelectorAll('#vctl [data-rate]').forEach(b=>b.setAttribute('aria-pressed', +b.dataset.rate===r)); }
+function killPlayer(){ clearInterval(loopTimer); loopTimer=null; try { player && player.destroy(); } catch(e) {} player = null; resetLoop(); setRateUI(1); $('#vctl').hidden = true; }
 function showVideo(g, i){
   const v = g.videos[i], box = $('#p-vid');
   document.querySelectorAll('#p-vsel button').forEach((b,k)=>b.setAttribute('aria-pressed', k===i));
+  killPlayer();
   if (!v) { box.innerHTML = `<div class="novid">Sin vídeo</div>`; return; }
   if (v.ne) { box.innerHTML = `<div class="novid">Este vídeo solo se puede ver en YouTube.<a href="${esc(v.u)}" target="_blank" rel="noopener" style="color:#fff">Abrir en YouTube</a></div>`; return; }
-  box.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${ytId(v.u)}?rel=0&playsinline=1" title="Vídeo de ${esc(g.s)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
+  const id = ytId(v.u);
+  box.innerHTML = '<div id="ytp"></div>';
+  ytApi().then(() => {
+    if (cur !== g || !document.getElementById('ytp')) return;
+    player = new YT.Player('ytp', { host:'https://www.youtube-nocookie.com', videoId:id, width:'100%', height:'100%',
+      playerVars:{ rel:0, playsinline:1 },
+      events:{ onReady: () => { $('#vctl').hidden = false; } } });
+    loopTimer = setInterval(() => { if (player && loopA!=null && loopB!=null && player.getCurrentTime && player.getCurrentTime() >= loopB) player.seekTo(loopA, true); }, 150);
+  }).catch(() => {
+    box.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${id}?rel=0&playsinline=1" title="Vídeo de ${esc(g.s)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`;
+  });
 }
+$('#vctl').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b || !player || !player.getCurrentTime) return;
+  if (b.dataset.rate) { const r = +b.dataset.rate; player.setPlaybackRate(r); setRateUI(r); return; }
+  const now = player.getCurrentTime();
+  if (b.id==='v-back') player.seekTo(Math.max(0, (loopA!=null && loopB!=null) ? Math.max(loopA, now-5) : now-5), true);
+  if (b.id==='loop-a') { loopA = now; if (loopB!=null && loopB<=loopA) loopB=null; }
+  if (b.id==='loop-b') { if (loopA==null) loopA = Math.max(0, now-10); if (now>loopA) { loopB = now; player.seekTo(loopA, true); player.playVideo(); } }
+  if (b.id==='loop-x') resetLoop();
+  if (b.id!=='loop-x' && b.id!=='v-back') {
+    $('#loop-a').setAttribute('aria-pressed', loopA!=null); $('#loop-b').setAttribute('aria-pressed', loopB!=null);
+    $('#loop-x').hidden = loopA==null && loopB==null;
+    $('#loop-info').textContent = loopA!=null ? (loopB!=null ? `Bucle ${fmtT(loopA)}–${fmtT(loopB)}` : `Desde ${fmtT(loopA)}…`) : '';
+  }
+});
+
 function openPractice(g, from){
-  cur = g; lastFocus = document.activeElement;
+  killPlayer(); cur = g; if (!$("#practice").contains(document.activeElement)) lastFocus = document.activeElement;
   const pr = $('#practice');
   if (from) { const r = from.getBoundingClientRect(); pr.style.setProperty('--x', (r.left+r.width/2)+'px'); pr.style.setProperty('--y', (r.top+r.height/2)+'px'); }
   else { pr.style.setProperty('--x','50%'); pr.style.setProperty('--y','50%'); }
@@ -408,6 +474,7 @@ function openPractice(g, from){
 }
 function closePractice(){
   const pr = $('#practice'); if (pr.hidden) return;
+  killPlayer();
   const done = () => { pr.hidden = true; pr.classList.remove('closing'); $('#p-main').innerHTML=''; $('#p-vid').innerHTML=''; };
   pr.classList.remove('opening');
   if (motionOK) { pr.classList.add('closing'); setTimeout(done, 380); } else done();
@@ -427,6 +494,9 @@ const activate = el => { const g = DATA[+el.dataset.p]; if (g) openPractice(g, e
 $('#list').addEventListener('click', e => { const c=e.target.closest('.card'); if (!c || e.button!==0 || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return; e.preventDefault(); activate(c); });
 const fromHash = () => { const h=decodeURIComponent(location.hash.slice(1)); const g=h&&DATA.find(x=>x.slug===h); if (g) openPractice(g); };
 addEventListener('hashchange', fromHash);
+function randomSong(){ const pool = visible().filter(g => g!==cur); const list = pool.length ? pool : DATA.filter(g=>g!==cur); return list[Math.floor(Math.random()*list.length)]; }
+$('#dice').addEventListener('click', e => { const b=e.currentTarget; b.classList.remove('roll'); void b.offsetWidth; b.classList.add('roll'); const g = randomSong(); if (g) openPractice(g, b); });
+$('#p-dice').addEventListener('click', () => { const g = randomSong(); if (g) openPractice(g); });
 render(); fromHash();
 </script>
 </body>
