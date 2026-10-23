@@ -248,7 +248,7 @@ $('#stats').innerHTML = [[songs.length,'canciones'],[Object.keys(artists).length
 
 /* Diapasón: trastes, cuerdas, incrustaciones y un La menor */
 (function fret(){
-  const W=1400,H=150,frets=15,x0=-20,step=W/ (frets-1), sy=[22,43,64,86,107,128];
+  const W=1400,H=150,frets=15,x0=36,step=(W-36)/ (frets-1), sy=[22,43,64,86,107,128];
   let s=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><defs><linearGradient id="wd" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#2a1c15"/><stop offset="1" stop-color="#1b1310"/></linearGradient></defs><rect width="${W}" height="${H}" fill="url(#wd)"/>`;
   for(let f=0;f<frets;f++){ const x=x0+f*step; s+=`<rect x="${x}" y="8" width="${f===0?9:4}" height="${H-16}" fill="${f===0?'#e9dcc6':'#b98b4f'}" opacity="${f===0?.9:.75}"/>`; }
   [3,5,7,9].forEach(f=>{ const x=x0+(f-.5)*step; s+=`<circle cx="${x}" cy="75" r="7" fill="#7CCAB9" opacity=".55"/>`; });
