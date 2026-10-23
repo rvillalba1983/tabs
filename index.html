@@ -6,223 +6,219 @@
 <title>Tabs de Raulito</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gloock&family=Figtree:wght@400;500;600;700&display=swap">
 <style>
-/* Layout: cancionero de una columna; cabecera con buscador, índice de artistas lateral en escritorio, filas tipo diapasón con trastes como separadores */
+/* Diseño: estuche de guitarra. Madera de palosanto, trastes de latón, cuerdas de níquel, incrustaciones de nácar.
+   Cabecera = diapasón con un acorde de La menor; listado en tarjetas agrupadas por inicial; modo práctica a pantalla completa. */
 :root{
-  --bg:#F2F3EF; --surface:#FBFBF9; --fg:#1C201D; --muted:#5B635D; --line:#D5D9D1; --fret:#C9B48E;
-  --accent:#9A5A14; --accent-soft:#F0E3CF; --ok:#2F6B45; --bad:#A3332B; --bad-soft:#F6E1DE; --warn:#8A6A12;
-  --display:"Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
-  --body:"Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
-  --mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --wood:#1B1310; --wood-2:#241913; --wood-3:#2F2119; --grain:#3B2A20;
+  --ivory:#F4EADC; --dust:#B9A693; --brass:#E2A55A; --brass-2:#F2C487; --nickel:#CBCFD4; --nacre:#7CCAB9;
+  --display:"Gloock", Georgia, "Times New Roman", serif;
+  --body:"Figtree", "Segoe UI", system-ui, sans-serif;
+  color-scheme:dark;
 }
-@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
-  --bg:#171412; --surface:#201B18; --fg:#EDE7DE; --muted:#A79C90; --line:#3A322C; --fret:#6E5A3E;
-  --accent:#E0A45C; --accent-soft:#3A2B1C; --ok:#7CC293; --bad:#F08A7E; --bad-soft:#3B201D; --warn:#E3C163; color-scheme:dark }}
-:root[data-theme="dark"]{
-  --bg:#171412; --surface:#201B18; --fg:#EDE7DE; --muted:#A79C90; --line:#3A322C; --fret:#6E5A3E;
-  --accent:#E0A45C; --accent-soft:#3A2B1C; --ok:#7CC293; --bad:#F08A7E; --bad-soft:#3B201D; --warn:#E3C163; color-scheme:dark }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
-:root{padding-top:0}
-img{max-width:100%}
-body{background:var(--bg);color:var(--fg);font:16px/1.5 var(--body);margin:0}
-body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--wood);color:var(--ivory);font:16px/1.55 var(--body);overflow-x:clip;
+  background-image:repeating-linear-gradient(92deg, rgba(255,255,255,.012) 0 2px, transparent 2px 9px), radial-gradient(1200px 600px at 80% -10%, rgba(226,165,90,.10), transparent 60%)}
 a{color:inherit}
-.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-header.top{padding-block:40px 20px}
-.strings{display:grid;gap:5px;margin-bottom:22px;max-width:340px}
-.strings i{display:block;height:1px;background:var(--fret)}
-.strings i:nth-child(4){height:1.5px}.strings i:nth-child(5){height:2px}.strings i:nth-child(6){height:2.5px}
-h1{font:800 clamp(2.4rem,7vw,4.6rem)/.95 var(--display);letter-spacing:-.02em;margin:0;text-wrap:balance}
-h1 span{color:var(--accent)}
-.lede{color:var(--muted);max-width:62ch;margin:14px 0 0;font-size:1.02rem}
-.stats{display:flex;flex-wrap:wrap;gap:8px 22px;margin:20px 0 0;padding:0;list-style:none;font:500 .82rem var(--mono);color:var(--muted)}
-.stats b{color:var(--fg);font-weight:500;font-variant-numeric:tabular-nums}
-.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding-block:12px}
-.bar .wrap{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-.search{flex:1 1 280px;min-width:0;position:relative}
-.search input{width:100%;font:1rem var(--body);color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:11px 14px 11px 38px}
-.search input:focus{outline:2px solid var(--accent);outline-offset:1px}
-.search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;stroke:var(--muted)}
-.chips{display:flex;flex-wrap:wrap;gap:6px}
-.chip{font:500 .8rem var(--mono);border:1px solid var(--line);background:transparent;color:var(--fg);padding:7px 11px;border-radius:999px;cursor:pointer}
-.chip[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
-.chip:focus-visible,.alink:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.chip .n{opacity:.6;margin-left:4px}
-select.sort{font:500 .8rem var(--mono);color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:7px 8px}
-.layout{display:grid;grid-template-columns:220px minmax(0,1fr);gap:36px;padding-block:24px 64px}
-.layout>*,.bar .wrap>*,li.song>*{min-width:0}
-html,body{overflow-x:clip}
-aside.idx{position:sticky;top:calc(env(safe-area-inset-top,0px) + 76px);align-self:start;max-height:calc(100vh - 100px);overflow:auto;padding-right:6px}
-aside h2,.sec-h{font:700 .72rem var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
-aside ul{list-style:none;margin:0;padding:0;display:grid;gap:1px}
-aside button{all:unset;cursor:pointer;display:flex;justify-content:space-between;gap:8px;width:100%;box-sizing:border-box;padding:4px 8px;border-radius:4px;font-size:.88rem}
-aside button:hover{background:var(--accent-soft)}
-aside button[aria-pressed="true"]{background:var(--accent);color:var(--bg)}
-aside button span{font:.75rem var(--mono);opacity:.7}
-.count{font:500 .82rem var(--mono);color:var(--muted);margin:0 0 6px}
-ol.songs{list-style:none;margin:0;padding:0}
-li.song{border-top:1px solid var(--line);padding:16px 0 18px;display:grid;grid-template-columns:52px minmax(0,1fr);gap:4px 18px;align-items:start}
-li.song:first-child{border-top:2px solid var(--fret)}
-.av{width:52px;height:52px;border-radius:50%;object-fit:cover;background:var(--accent-soft);display:grid;place-items:center;font:700 1rem var(--display);color:var(--accent);border:1px solid var(--line);overflow:hidden}
-.av img{width:100%;height:100%;object-fit:cover;display:block}
-.av.res{border-radius:10px;background:transparent;color:var(--muted)}
-.av.res svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.6}
-aside .mini{width:20px;height:20px;border-radius:50%;object-fit:cover;flex:none;background:var(--accent-soft)}
-aside button{align-items:center}
-aside .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.ttl{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px}
-.ttl h3{font:700 1.3rem/1.2 var(--display);margin:0;text-wrap:balance}
-.ttl .art{color:var(--muted);font-size:.95rem}
-.art button{all:unset;cursor:pointer;border-bottom:1px dotted var(--muted)}
-.tags{display:inline-flex;gap:6px;flex-wrap:wrap}
-.tag{font:500 .68rem var(--mono);letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:3px;background:var(--accent-soft);color:var(--accent)}
-.tag.res{background:transparent;border:1px solid var(--line);color:var(--muted)}
-.links{grid-column:2;display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
-.alink{display:inline-flex;align-items:center;gap:6px;font:.84rem var(--body);text-decoration:none;border:1px solid var(--line);background:var(--surface);padding:5px 10px;border-radius:5px}
-.alink:hover{border-color:var(--accent)}
-.alink svg{width:13px;height:13px;flex:none}
-.alink.yt svg{fill:var(--bad)} .alink.tab svg,.alink.web svg,.alink.video svg{fill:none;stroke:var(--accent);stroke-width:2}
-.alink.dead{background:transparent;color:var(--muted);text-decoration:line-through;border-style:dashed}
-.alink.dead svg{fill:var(--muted);stroke:var(--muted)}
-.alink.alt{border-color:var(--ok);color:var(--fg)}
-.alink.alt small,.alink.nv small{font:500 .66rem var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--ok)}
-.alink.nv small{color:var(--warn)}
-.why{grid-column:2;font:.78rem var(--mono);color:var(--bad);margin-top:6px}
-.why span{color:var(--muted)}
-.meta{grid-column:2;font:.78rem var(--mono);color:var(--muted);margin-top:8px;display:flex;flex-wrap:wrap;gap:4px 14px}
-.meta a{color:var(--muted)}
-details.own{grid-column:2;margin-top:12px;border:1px solid var(--fret);border-radius:6px;background:var(--surface)}
-details.own summary{cursor:pointer;padding:9px 14px;font:700 .85rem var(--display);color:var(--accent);list-style:none;display:flex;gap:8px;align-items:center}
-details.own summary::-webkit-details-marker{display:none}
-details.own summary::before{content:"";width:0;height:0;border-left:6px solid currentColor;border-top:5px solid transparent;border-bottom:5px solid transparent;transition:transform .15s}
-details.own[open] summary::before{transform:rotate(90deg)}
-.ownbody{padding:2px 14px 16px;display:grid;gap:14px}
-.capo{font:500 .85rem var(--mono);color:var(--fg)}
-.capo b{color:var(--accent);font-weight:500}
-.note{color:var(--muted);font-size:.92rem;max-width:65ch}
-pre{margin:0;font:.82rem/1.45 var(--mono);white-space:pre;overflow-x:auto;padding:12px;background:var(--bg);border-radius:4px;border:1px solid var(--line)}
-pre.chords{color:var(--fg)}
-.shapes{display:flex;flex-wrap:wrap;gap:14px}
-.shape{display:grid;justify-items:center;gap:4px;font:.72rem var(--mono);color:var(--muted)}
-.shape svg{width:78px;height:96px}
-.empty{padding:40px 0;color:var(--muted)}
-.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font:.78rem var(--mono);color:var(--muted);margin:0 0 14px}
-.legend span{display:inline-flex;align-items:center;gap:6px}
-.dot{width:10px;height:10px;border-radius:2px;border:1px solid var(--line);background:var(--surface)}
-.dot.d{border-style:dashed;background:transparent}.dot.a{border-color:var(--ok)}
-footer{border-top:1px solid var(--line);padding-block:24px 40px;color:var(--muted);font-size:.85rem}
-@media (max-width:860px){
-  .layout{grid-template-columns:minmax(0,1fr);gap:16px}
-  aside.idx{position:static;max-height:none}
-  aside ul{display:flex;overflow-x:auto;gap:4px;padding-bottom:6px}
-  aside li{flex:none}
-  aside button{white-space:nowrap;border:1px solid var(--line)}
-  li.song{grid-template-columns:44px minmax(0,1fr);gap:4px 12px}
-  .av{width:44px;height:44px}
-  .links,details.own{grid-column:1 / -1}
-}
-@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--brass);outline-offset:3px;border-radius:6px}
+.wrap{max-width:1240px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
 
-/* ---- Modo práctica ---- */
-.practice{position:fixed;inset:0;z-index:50;background:var(--bg);display:grid;grid-template-rows:auto minmax(0,1fr);padding-top:env(safe-area-inset-top,0px)}
-.practice
-.pbar{display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap;padding-block:8px;padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px));border-bottom:1px solid var(--line);background:var(--surface)}
-.pbar .av{width:34px;height:34px;font-size:.8rem}
-.pbar h2{font:700 1.05rem/1.2 var(--display);margin:0}
-.pbar .who{font-size:.85rem;color:var(--muted)}
-.pbar .ttlbox{min-width:0;flex:1 1 180px}
-.pbar .src{display:flex;gap:6px;flex-wrap:wrap}
-.pbtn{font:500 .78rem var(--mono);border:1px solid var(--line);background:var(--bg);color:var(--fg);padding:6px 10px;border-radius:5px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
-.pbtn[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
-.pbtn.close{font-size:1rem;padding:4px 10px}
-.stage{position:relative;min-height:0;overflow:hidden}
-.stage iframe.tabframe{width:100%;height:100%;border:0;background:#fff;display:block}
-.stage .ownview{height:100%;overflow:auto;padding:18px max(16px,env(safe-area-inset-left,0px)) 18px max(16px,env(safe-area-inset-right,0px));display:grid;gap:14px;align-content:start}
-.stage .ownview pre{font-size:.95rem}
-.stage .ownview .shape svg{width:96px;height:118px}
-.stage .nolink{height:100%;display:grid;place-content:center;justify-items:center;gap:12px;padding:24px;text-align:center;color:var(--muted)}
-.stage .nolink a{font-size:1rem}
-.pip{position:absolute;right:max(12px,env(safe-area-inset-right,0px));bottom:max(12px,env(safe-area-inset-bottom,0px));width:var(--pip-w,320px);max-width:calc(100% - 24px);background:#000;border-radius:8px;overflow:hidden;box-shadow:0 8px 28px rgba(0,0,0,.35);border:1px solid var(--line)}
-.pip.top{bottom:auto;top:12px}
-.pip.left{right:auto;left:max(12px,env(safe-area-inset-left,0px))}
-.pip .vid{aspect-ratio:16/9;width:100%;max-width:100%}
+/* ---------- Cabecera / diapasón ---------- */
+.hero{position:relative;overflow:hidden;padding-top:env(safe-area-inset-top,0px)}
+.hero .wrap{position:relative;z-index:2;padding-block:56px 30px;display:grid;gap:18px}
+h1{font:400 clamp(3rem,10vw,7.2rem)/.86 var(--display);letter-spacing:-.02em;margin:0;text-wrap:balance;max-width:11ch}
+.lede{margin:0;max-width:52ch;color:var(--dust);font-size:1.08rem}
+.counts{display:flex;flex-wrap:wrap;gap:10px 28px;margin:6px 0 0;padding:0;list-style:none}
+.counts li{display:grid}
+.counts b{font:400 2rem/1 var(--display);color:var(--brass-2);font-variant-numeric:tabular-nums}
+.counts span{font-size:.85rem;color:var(--dust)}
+.fret{position:relative;z-index:1;height:150px;margin-top:6px}
+.fret svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.fret .str{transform-box:fill-box;transform-origin:center}
+@media (prefers-reduced-motion:no-preference){
+  .fret .str{animation:pluck 1.6s cubic-bezier(.2,.7,.2,1) both}
+  .fret .str:nth-of-type(2){animation-delay:.06s}.fret .str:nth-of-type(3){animation-delay:.12s}
+  .fret .str:nth-of-type(4){animation-delay:.18s}.fret .str:nth-of-type(5){animation-delay:.24s}.fret .str:nth-of-type(6){animation-delay:.30s}
+  .fret .dot{animation:glow 1.2s .5s ease-out both}
+}
+@keyframes pluck{0%{transform:scaleY(1)}8%{transform:translateY(-2.4px)}16%{transform:translateY(2px)}26%{transform:translateY(-1.4px)}38%{transform:translateY(1px)}52%{transform:translateY(-.5px)}70%,100%{transform:none}}
+@keyframes glow{from{opacity:0;r:0}to{opacity:1}}
+
+/* ---------- Barra de búsqueda fija ---------- */
+.tools{position:sticky;top:0;z-index:20;padding-top:env(safe-area-inset-top,0px);transition:background .25s,box-shadow .25s,backdrop-filter .25s}
+.tools.stuck{background:rgba(27,19,16,.86);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 1px 0 var(--grain),0 10px 30px rgba(0,0,0,.35)}
+.tools .wrap{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;padding-block:12px}
+.search{position:relative;flex:1 1 300px;min-width:0}
+.search input{width:100%;font:500 1.05rem var(--body);color:var(--ivory);background:var(--wood-2);border:1px solid var(--grain);border-radius:999px;padding:13px 18px 13px 46px;transition:border-color .2s,background .2s}
+.search input::placeholder{color:#8f7e6d}
+.search input:focus{outline:none;border-color:var(--brass);background:var(--wood-3)}
+.search svg{position:absolute;left:17px;top:50%;transform:translateY(-50%);width:18px;height:18px;stroke:var(--brass);fill:none;stroke-width:2}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--grain);background:transparent;padding:8px 14px;border-radius:999px;cursor:pointer;font-size:.88rem;font-weight:600;color:var(--dust);transition:all .2s}
+.chip:hover{color:var(--ivory);border-color:#5a4434}
+.chip[aria-pressed="true"]{background:var(--brass);border-color:var(--brass);color:var(--wood)}
+.chip .n{font-weight:500;opacity:.7;margin-left:5px}
+.sort{background:var(--wood-2);color:var(--ivory);border:1px solid var(--grain);border-radius:999px;padding:9px 14px;font:600 .88rem var(--body)}
+
+/* ---------- Artistas ---------- */
+.artists{padding-block:22px 6px}
+.artists h2,.sec h2{font:400 1.6rem/1.1 var(--display);margin:0 0 14px}
+.strip{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x proximity;padding:4px 2px 14px;scrollbar-width:thin;scrollbar-color:var(--grain) transparent}
+.strip button{all:unset;cursor:pointer;scroll-snap-align:start;display:grid;justify-items:center;gap:7px;width:76px;flex:none;text-align:center}
+.strip .ring{width:64px;height:64px;border-radius:50%;padding:3px;background:var(--grain);transition:background .2s,transform .2s}
+.strip button:hover .ring{transform:translateY(-3px)}
+.strip button[aria-pressed="true"] .ring{background:conic-gradient(from 200deg,var(--brass),var(--brass-2),var(--nacre),var(--brass))}
+.strip .ring img,.strip .ring i{width:100%;height:100%;border-radius:50%;object-fit:cover;display:grid;place-items:center;background:var(--wood-3);font:400 1.2rem var(--display);font-style:normal;color:var(--brass-2);border:2px solid var(--wood)}
+.strip .nm{font-size:.75rem;line-height:1.2;color:var(--dust);max-width:76px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.strip button[aria-pressed="true"] .nm{color:var(--ivory);font-weight:600}
+.strip button:focus-visible{outline:2px solid var(--brass);outline-offset:4px;border-radius:10px}
+
+/* ---------- Canciones ---------- */
+.sec{padding-block:18px 80px}
+.sechead{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.count{color:var(--dust);font-size:.92rem;margin:0}
+.group{display:grid;grid-template-columns:72px minmax(0,1fr);gap:14px;padding-top:22px;border-top:1px solid var(--grain);margin-top:22px}
+.group:first-of-type{border-top:0;margin-top:6px}
+.letter{font:400 3.4rem/1 var(--display);color:var(--brass);position:sticky;top:84px;align-self:start}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;list-style:none;margin:0;padding:0}
+.card{position:relative;display:grid;grid-template-columns:54px minmax(0,1fr);gap:4px 14px;align-items:center;padding:14px 16px;border-radius:14px;background:linear-gradient(180deg,var(--wood-2),#20160f);border:1px solid var(--grain);cursor:pointer;transition:transform .25s cubic-bezier(.2,.8,.2,1),border-color .2s,box-shadow .25s}
+.card:hover,.card:focus-visible{transform:translateY(-3px);border-color:#6b4f37;box-shadow:0 14px 30px rgba(0,0,0,.35)}
+.card:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+.av{width:54px;height:54px;border-radius:50%;overflow:hidden;background:var(--wood-3);display:grid;place-items:center;font:400 1.15rem var(--display);color:var(--brass-2);box-shadow:0 0 0 2px var(--wood),0 0 0 3px var(--grain)}
+.av img{width:100%;height:100%;object-fit:cover;display:block}
+.av.res{border-radius:12px;color:var(--nacre)}
+.av.res svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.7}
+.card h3{font:400 1.18rem/1.15 var(--display);margin:0;text-wrap:balance}
+.card .by{color:var(--dust);font-size:.86rem;margin:2px 0 0}
+.feats{grid-column:1 / -1;display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.ft{display:inline-flex;align-items:center;gap:5px;font-size:.74rem;font-weight:600;padding:3px 9px;border-radius:999px;background:rgba(255,255,255,.04);color:var(--dust);border:1px solid var(--grain)}
+.ft svg{width:11px;height:11px}
+.ft.v svg{fill:#e2564a}.ft.t svg{fill:none;stroke:var(--nickel);stroke-width:2}
+.ft.mine{background:rgba(226,165,90,.14);color:var(--brass-2);border-color:rgba(226,165,90,.35)}
+.card .go{position:absolute;right:14px;top:14px;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--brass);color:var(--wood);opacity:0;transform:scale(.8);transition:all .2s}
+.card .go svg{width:12px;height:12px;fill:currentColor;margin-left:2px}
+.card:hover .go,.card:focus-visible .go{opacity:1;transform:none}
+.empty{color:var(--dust);padding:40px 0;font-size:1.05rem}
+footer{border-top:1px solid var(--grain);padding-block:28px 48px;color:var(--dust);font-size:.88rem}
+
+@media (prefers-reduced-motion:no-preference){
+  .card.in{animation:rise .5s cubic-bezier(.2,.8,.2,1) both}
+}
+@keyframes rise{from{transform:translateY(14px)}to{transform:none}}
+
+/* ---------- Modo práctica ---------- */
+.practice{position:fixed;inset:0;z-index:50;background:var(--wood);display:grid;grid-template-rows:auto minmax(0,1fr);padding-top:env(safe-area-inset-top,0px);--x:50%;--y:50%}
+@media (prefers-reduced-motion:no-preference){
+  .practice.opening{animation:reveal .55s cubic-bezier(.65,0,.25,1) both}
+  .practice.closing{animation:reveal .4s cubic-bezier(.65,0,.25,1) reverse both}
+}
+@keyframes reveal{from{clip-path:circle(0 at var(--x) var(--y))}to{clip-path:circle(150% at var(--x) var(--y))}}
+.pbar{display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap;padding-block:10px;padding-left:max(14px,env(safe-area-inset-left,0px));padding-right:max(14px,env(safe-area-inset-right,0px));background:linear-gradient(180deg,var(--wood-3),var(--wood-2));border-bottom:1px solid var(--grain)}
+.pbar .av{width:40px;height:40px;font-size:.9rem}
+.pbar h2{font:400 1.3rem/1.1 var(--display);margin:0}
+.pbar .who{font-size:.85rem;color:var(--dust)}
+.ttlbox{min-width:0;flex:1 1 180px}
+.src{display:flex;gap:6px;flex-wrap:wrap}
+.pbtn{font:600 .82rem var(--body);border:1px solid var(--grain);background:var(--wood);color:var(--ivory);padding:7px 12px;border-radius:999px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.pbtn:hover{border-color:#6b4f37}
+.pbtn[aria-pressed="true"]{background:var(--brass);color:var(--wood);border-color:var(--brass)}
+.pbtn.close{width:38px;height:38px;justify-content:center;padding:0;font-size:1.1rem}
+.stage{position:relative;min-height:0;overflow:hidden;background:#fff}
+.tabframe{width:100%;height:100%;border:0;display:block;background:#fff}
+.ownview{height:100%;overflow:auto;background:var(--wood);padding:24px max(20px,env(safe-area-inset-left,0px)) 24px max(20px,env(safe-area-inset-right,0px));display:grid;gap:16px;align-content:start}
+.ownview pre{margin:0;font:.95rem/1.5 ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;white-space:pre;overflow-x:auto;padding:16px;background:var(--wood-2);border:1px solid var(--grain);border-radius:10px;color:var(--ivory)}
+.capo{font-weight:600}.capo b{color:var(--brass-2)}
+.note{color:var(--dust);max-width:65ch;margin:0}
+.shapes{display:flex;flex-wrap:wrap;gap:16px}
+.shape{display:grid;justify-items:center;gap:6px;font-size:.78rem;color:var(--dust)}
+.shape svg{width:96px;height:118px}
+.nolink{height:100%;display:grid;place-content:center;justify-items:center;gap:14px;padding:24px;text-align:center;color:var(--dust);background:var(--wood)}
+.cta{font:700 .95rem var(--body);background:var(--brass);color:var(--wood);border:0;padding:11px 18px;border-radius:999px;text-decoration:none}
+.pip{position:absolute;right:max(14px,env(safe-area-inset-right,0px));bottom:max(14px,env(safe-area-inset-bottom,0px));width:var(--pip-w,320px);max-width:calc(100% - 28px);background:#000;border-radius:14px;overflow:hidden;box-shadow:0 18px 50px rgba(0,0,0,.55),0 0 0 1px rgba(226,165,90,.35);transition:width .3s cubic-bezier(.2,.8,.2,1)}
+.pip.top{bottom:auto;top:14px}.pip.left{right:auto;left:max(14px,env(safe-area-inset-left,0px))}
+.pip .vid{aspect-ratio:16/9;width:100%}
 .pip iframe{width:100%;height:100%;border:0;display:block}
-.pip .pctl{display:flex;gap:4px;flex-wrap:wrap;align-items:center;padding:5px 6px;background:var(--surface)}
-.pip .pctl button,.pip .pctl a{font:500 .7rem var(--mono);border:1px solid var(--line);background:var(--bg);color:var(--fg);padding:4px 7px;border-radius:4px;cursor:pointer;text-decoration:none}
-.pip .pctl button[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
-.pip .pctl .sp{flex:1}
+.pctl{display:flex;gap:4px;flex-wrap:wrap;align-items:center;padding:6px;background:var(--wood-2)}
+.pctl button{font:600 .72rem var(--body);border:1px solid var(--grain);background:var(--wood);color:var(--ivory);padding:4px 9px;border-radius:999px;cursor:pointer}
+.pctl button[aria-pressed="true"]{background:var(--brass);color:var(--wood)}
+.pctl .sp{flex:1}
 .pip.min .vid{display:none}
-.pip .novid{color:#ddd;font-size:.85rem;padding:14px;aspect-ratio:16/9;display:grid;place-content:center;text-align:center;gap:6px}
-.pip .novid a{color:#fff}
-.play{font:700 .78rem var(--mono);border:1px solid var(--accent);background:var(--accent);color:var(--bg);padding:6px 11px;border-radius:5px;cursor:pointer;display:inline-flex;gap:6px;align-items:center}
-.play svg{width:12px;height:12px;fill:currentColor}
-.ttl h3 button{all:unset;cursor:pointer}
-.ttl h3 button:hover{color:var(--accent)}
-@media (max-width:700px){ .pip{--pip-w:58vw} .pbar h2{font-size:.95rem} }
+.novid{color:#ddd;font-size:.85rem;padding:14px;aspect-ratio:16/9;display:grid;place-content:center;text-align:center;gap:6px}
+
+@media (max-width:760px){
+  .hero .wrap{padding-block:40px 18px}
+  .fret{height:96px}
+  .group{grid-template-columns:minmax(0,1fr);gap:8px}
+  .letter{position:static;font-size:2.4rem}
+  .cards{grid-template-columns:minmax(0,1fr)}
+  .pip{--pip-w:58vw}
+  .pbar h2{font-size:1.05rem}
+}
 </style>
 </head>
 <body>
 
-
-<header class="top wrap">
-  <div class="strings" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
-  <h1>Tabs de <span>Raulito</span></h1>
-  <p class="lede">Las canciones que he ido guardando para estudiar con la guitarra: vídeos, acordes de otras webs y algunas tablaturas escritas por mí.</p>
-  <ul class="stats" id="stats"></ul>
+<header class="hero">
+  <div class="wrap">
+    <h1>Tabs de Raulito</h1>
+    <p class="lede">Las canciones que voy guardando para tocar con la guitarra. Elige una, abre los acordes en grande y deja el vídeo sonando en una esquina.</p>
+    <ul class="counts" id="stats"></ul>
+  </div>
+  <div class="fret" aria-hidden="true" id="fret"></div>
 </header>
 
-<div class="bar">
+<div class="tools" id="tools">
   <div class="wrap">
     <label class="search" for="q">
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
-      <input id="q" type="search" placeholder="Busca canción, artista o web…" autocomplete="off" aria-label="Buscar">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+      <input id="q" type="search" placeholder="Busca una canción o un artista" autocomplete="off" aria-label="Buscar">
     </label>
     <div class="chips" role="group" aria-label="Filtros" id="chips"></div>
     <select class="sort" id="sort" aria-label="Ordenar">
-      <option value="artist">Artista A–Z</option>
-      <option value="song">Canción A–Z</option>
+      <option value="artist">Por artista</option>
+      <option value="song">Por canción</option>
     </select>
   </div>
 </div>
 
-<main class="wrap layout">
-  <aside class="idx" aria-label="Artistas">
+<main>
+  <section class="wrap artists" aria-label="Artistas">
     <h2>Artistas</h2>
-    <ul id="artists"></ul>
-  </aside>
-  <section>
-    <p class="count" id="count" aria-live="polite"></p>
-    <ol class="songs" id="list"></ol>
+    <div class="strip" id="artists"></div>
+  </section>
+  <section class="wrap sec">
+    <div class="sechead"><h2 id="sectitle">Canciones</h2><p class="count" id="count" aria-live="polite"></p></div>
+    <div id="list"></div>
   </section>
 </main>
-
 
 <div class="practice" id="practice" hidden role="dialog" aria-modal="true" aria-labelledby="p-title">
   <div class="pbar">
     <span id="p-av"></span>
     <div class="ttlbox"><h2 id="p-title"></h2><div class="who" id="p-who"></div></div>
     <div class="src" id="p-src" role="group" aria-label="Fuente de acordes"></div>
-    <a class="pbtn" id="p-open" target="_blank" rel="noopener">Abrir en pestaña ↗</a>
-    <button class="pbtn close" id="p-close" aria-label="Cerrar">✕</button>
+    <a class="pbtn" id="p-open" target="_blank" rel="noopener">Abrir en otra pestaña</a>
+    <button class="pbtn close" id="p-close" aria-label="Volver al listado">✕</button>
   </div>
-  <div class="stage" id="p-stage">
+  <div class="stage">
     <div id="p-main" style="height:100%"></div>
     <div class="pip" id="pip">
       <div class="vid" id="p-vid"></div>
       <div class="pctl">
-        <span id="p-vsel"></span>
-        <span class="sp"></span>
-        <button id="pip-size" title="Cambiar tamaño">Tamaño</button>
-        <button id="pip-move" title="Mover a otra esquina">Mover</button>
-        <button id="pip-min" aria-pressed="false" title="Ocultar el vídeo (el audio sigue)">Ocultar</button>
+        <span id="p-vsel"></span><span class="sp"></span>
+        <button id="pip-size">Tamaño</button>
+        <button id="pip-move">Mover</button>
+        <button id="pip-min" aria-pressed="false">Ocultar</button>
       </div>
     </div>
   </div>
 </div>
 
-<footer class="wrap">Enlaces comprobados el 23 de octubre de 2026. Los que habían desaparecido están sustituidos por vídeos o acordes equivalentes.</footer>
+<footer class="wrap">Enlaces comprobados el 23 de octubre de 2026.</footer>
 
 <script>
 const DATA = [{"a":"Académica Palanca","s":"Romance de mala persona","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/academica_palanca/romance_de_mala_persona.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"https://www.youtube.com/watch?v=s9sItsn3Tw8","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Albertucho","s":"Las moscas","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/albertucho/las_moscas-2.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Aldo Narejos","s":"Salgo del hoyo","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/aldo_narejos/salgo_del_hoyo.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"https://www.youtube.com/watch?v=Jx1AhUaaBis","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Aldo Narejos","s":"Te quiero asi","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=kzcE2_9iiec","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://acordes.lacuerda.net/aldo_narejos/te_quiero_asi.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Alejandro Astola","s":"Agua de mi fuente","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/alejandro_astola/agua_de_mi_fuente.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Alejandro Astola","s":"Calavera por bandera","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/alejandro_astola/calavera_por_bandera.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Alejandro Astola","s":"Cojo el saco y me retiro","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=0PvOcVfRU84","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://acordes.lacuerda.net/alejandro_astola/cojo_el_saco_y_me_retiro-2.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Alejandro Astola","s":"Ermitaño","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/alejandro_astola/ermitanio.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"https://www.youtube.com/watch?v=a5fgQC4CrTo","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Alejandro Astola","s":"La luna","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=UJ0bME6s24s","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://acordes.lacuerda.net/alejandro_astola/la_luna.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Alejandro Astola","s":"No quiero crecer","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/alejandro_astola/no_quiero_crecer.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Alex Matía","s":"Fuego","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=hDuRoSn7MtM","k":"youtube","n":"Vídeo","st":"ok"}],"own":{"capo":"Capo en el 2º traste","notes":"Acordes en orden de aparición (cuerdas de 6ª a 1ª).","chords":"","shapes":["X 7 9 9 8 7","X 5 7 7 7 5","X 2 4 4 3 2","X 0 2 2 1 0","X 3 2 0 1 0","X X 0 2 3 2","0 2 2 0 0 0"],"tab":""}},{"a":"Andrés Suárez","s":"Benijo","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/andres_suarez/benijo.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"https://www.youtube.com/watch?v=2B9WPBs6Pj8","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Andrés Suárez","s":"Necesitaba un vals para olvidarte","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/andres_suarez/necesitaba_un_vals_para_olvidarte.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"https://www.youtube.com/watch?v=Sod-dvKa8L0","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Andrés Suárez","s":"Sálvate Tú","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=7-CAc52LniQ","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://acordes.lacuerda.net/andres_suarez/salvate_tu.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Andrés Suárez","s":"Si Puedes","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=lAuIrp7bqrY","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://acordes.lacuerda.net/andres_suarez/si_puedes.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Andrés Suárez","s":"Tal vez te acuerdes de mi","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/andres_suarez/tal_vez_te_acuerdes_de_mi.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"https://www.youtube.com/watch?v=zqifVY1plq4","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Antonio Orozco","s":"Es mi soledad (acústico)","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=AdSsduxPLFM","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Antonio Orozco","s":"Mirame y tocame","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/antonio_orozco/mirame_y_tocame.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"https://www.youtube.com/watch?v=ytMVUSyW8rg","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Ariel Ramírez","s":"Alfonsina y el mar","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/ariel_ramirez/alfonsina_y_el_mar-2.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"https://www.youtube.com/watch?v=F_FRa9htNiw","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Arnau Griso","s":"Es gratis","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/arnau_griso/es_gratis-2.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Arnau Griso","s":"No se nadar","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/arnau_griso/no_se_nadar-2.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Arnau Griso","s":"Ser y estar","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/arnau_griso/ser_y_estar.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Bebe","s":"Tu silencio","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/bebe/tu_silencio-3.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"https://www.youtube.com/watch?v=up_HKF90qZY","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Boyce Avenue","s":"Game of Thrones (tema principal)","t":"cancion","links":[{"u":"https://tabs.ultimate-guitar.com/tab/boyce-avenue/game-of-thrones-main-theme-tabs-1839365","k":"tab","n":"Acordes · Ultimate Guitar","st":"ok"},{"u":"https://www.youtube.com/watch?v=wLXVDzM8Tnk","k":"youtube","n":"Vídeo","st":"ok"}],"own":{"notes":"Tablatura del tema principal (versión Boyce Avenue) + vídeo."}},{"a":"Boyce Avenue","s":"Roar (cover de Katy Perry)","t":"cancion","links":[{"u":"https://tabs.ultimate-guitar.com/tab/boyce-avenue/roar-tabs-1418993","k":"tab","n":"Acordes · Ultimate Guitar","st":"ok"},{"u":"https://www.youtube.com/watch?v=jqoHPzqUkZo","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Capitán Cobarde","s":"Capitán Cobarde","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=sMfNWj1_zjU","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Capitán Cobarde","s":"Descuida","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=lVFgwr5vY2E","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Capitán Cobarde","s":"El pisito","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=-7lSlEaZc2w","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Carlos Chaouen","s":"Corazón","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=SHyEvEWNIBU","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://acordes.lacuerda.net/carlos_chaouen/corazon-3.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Carmen Boza","s":"Octubre","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=zUp-CF-TTv4","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Club del Río","s":"Erosion","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/club_del_rio/erosion.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Club del Río","s":"Lobo amigo","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/club_del_rio/loboamigo.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"https://www.youtube.com/watch?v=c5YuDWkDnjA","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Club del Río","s":"Montaña","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/club_del_rio/montania.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"https://www.youtube.com/watch?v=KXek3qFvHH4","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Club del Río","s":"Remedios","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/club_del_rio/remedios.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"https://www.youtube.com/watch?v=D_FgPqNv2t8","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Coco (película)","s":"Recuérdame","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=JdSU_CyWUjo","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Dani Fernández","s":"Disparos","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/dani_fernandez/disparos.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"https://www.youtube.com/watch?v=I732LGTjGmw","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Dani Flaco","s":"A ras del suelo","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/dani_flaco/a_ras_de_suelo.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Dani Flaco","s":"Esta noche no es tan rara","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=gcCbhFhnOAg","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://acordes.lacuerda.net/dani_flaco/esta_noche_no_es_tan_rara.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Dani Flaco","s":"La gota que colma","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/dani_flaco/la_gota_que_colma.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"https://www.youtube.com/watch?v=-gz_QlWujvs","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Dani Flaco","s":"Versos y madera","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=JXb4cGKb9mw","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"D'Callaos","s":"Besos de cristal","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=E1cebrcBVKc","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://www.youtube.com/watch?v=jYS3ZAvcuUE","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"D'Callaos","s":"Se fue la luz","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=ztkLAMU7BKI","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Demarco","s":"Como te imaginé","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/demarco/como_te_imagine.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Despistaos","s":"Caricias en tu espalda","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=uYO83u7Ts0A","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://acordes.lacuerda.net/despistaos/caricias_en_tu_espalda-2.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Doctor Grillo","s":"Aquello era el río","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=QV-QLZfUpnM","k":"youtube","n":"Vídeo","st":"ok"}],"own":{"capo":"Cejilla en el 1er traste","notes":"Toda la canción con la misma rueda.","chords":"Sol - Re - Do - Re","tab":""}},{"a":"Doctor Grillo","s":"No me importaria","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/doctor_grillo/no_me_importaria.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Ed Sheeran","s":"I see fire","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=OJ5ZbroMvaY","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://www.youtube.com/watch?v=MMnvNtjPr-4","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://www.goliathguitartutorials.com/lessons/i-see-fire","k":"tab","n":"Acordes · goliathguitartutorials.com","st":"ok"},{"u":"https://www.youtube.com/watch?v=m-5_a3vXuh0","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"El Barrio","s":"No vale la pena","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=e6-jrFziKtI","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://acordes.lacuerda.net/barrio/no_vale_la_pena.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"El Kanka","s":"Canela en rama","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=9lgEOYR6EHk","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"El Kanka","s":"Confesión","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=5mW2tXLDXeA","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://www.youtube.com/watch?v=GX7abUYoFfQ","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"El Kanka","s":"Del miercoles al martes","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=_7kLFbyVgy0","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://www.youtube.com/watch?v=Xwx8jqqGkFo","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://www.youtube.com/watch?v=p5k7W4pUIR8","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"El Kanka","s":"Lo mal que estoy","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=yhp07lzKSJk","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://acordes.lacuerda.net/kanka/lo_mal_que_estoy","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"El Kanka","s":"Me gusta","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=sZMjOuy2P60","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://acordesweb.com/cancion/el-kanka/me-gusta","k":"tab","n":"Acordes · AcordesWeb","st":"ok"}]},{"a":"El Kanka","s":"Para quedarte","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/kanka/para_quedarte.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"https://www.youtube.com/watch?v=whCEwqu8Czo","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"El Kanka","s":"Por tu olor","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=DmoMplo2vQY","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"El Kanka","s":"Si que puedes","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/kanka/si_que_puedes.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"El Kanka","s":"Tienes que saltar","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/kanka/tienes_que_saltar.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"https://www.youtube.com/watch?v=9g2tHGislDM","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://www.youtube.com/watch?v=wSuLetJNJjQ","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"El Kanka","s":"Vengas cuando vengas","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=l9k5TMSB7cQ","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://acordes.lacuerda.net/kanka/vengas_cuando_vengas.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"El Niño de la Hipoteca","s":"No te irás jamás","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=gUjSud0rQo0","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"El Niño de la Hipoteca","s":"Que te vaya bien","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=SquKZyrerhQ","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"El Niño de la Hipoteca","s":"Y bailó una eternidad","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=qKfpOQ8das8","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"El Pescao","s":"Al otro lado del mar","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=FxAT1hM-r3k","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://acordes.lacuerda.net/david_otero_el_pescao/al_otro_lado_del_mar-3.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"El Pescao","s":"Cuando llegas tú","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=Rfo9uPCIg44","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"El Puchero del Hortelano","s":"Sevillanas hipotecadas","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/puchero_del_hortelano/sevillanas_hipotecadas.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"https://www.youtube.com/watch?v=Y_Pg5QnOTBU","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"El Refugio","s":"La flor más puta","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/refugio/la_flor_mas_puta.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"https://www.youtube.com/watch?v=634jOf5D-54","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Elena Bugedo","s":"Carta desde bogotá","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=nBzx19m0MG4&list=PL83673D941A00A946&index=88","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Extremoduro","s":"Golfa","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=uhT28QqfreU","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://acordes.lacuerda.net/extremoduro/golfa.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Fito Mansilla","s":"Te alejaste","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/fito_mansilla/te_alejaste.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Fondo Flamenco","s":"Escúchame Mujer","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/fondo_flamenco/escuchame_mujer-3.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"https://www.youtube.com/watch?v=vthK0lrgUOg","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Fran Fernández","s":"Ahí está ella","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=9Pe86-DnKOk","k":"youtube","n":"Vídeo","st":"ok"}],"own":{"capo":"","notes":"Posiciones escritas de 6ª a 1ª cuerda (solo las 4 graves + abiertas).","chords":"","shapes":["0 2 4 4 0 0","4 2 4 4 0 0","0 2 4 3 0 0","2 0 4 3 0 0","4 0 4 4 0 0","0 2 4 1 0 0"],"tab":""}},{"a":"Fran Fernández","s":"Príncipe de Zacatín","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=OwB3g7YPRsw","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://acordes.lacuerda.net/fran_fernandez/principe_de_zacatin.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Fran Fernández","s":"Si te he visto no me acuerdo","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=LECGyxKODG0","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://acordes.lacuerda.net/fran_fernandez/si_te_he_visto_no_me_acuerdo.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Fran Fernández","s":"Siempre quiero verte","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/fran_fernandez/siempre_quiero_verte.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"https://www.youtube.com/watch?v=osg59d3N7QI","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Fran Fernández","s":"Solo una más","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=ounggHUn39k","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://acordes.lacuerda.net/fran_fernandez/solo_una_mas.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Francisco Céspedes","s":"Te soñe lluvia de abril","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/francisco_cespedes/te_sonie_lluvia_de_abril-2.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Francisco Céspedes","s":"Vida loca","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/francisco_cespedes/vida_loca.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Frank Postigo","s":"Dónde estás","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=_ByaZcie2nk","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Glen Hansard","s":"Falling Slowly","t":"cancion","links":[{"u":"https://tabs.ultimate-guitar.com/tab/glen-hansard/falling-slowly-tabs-656277","k":"tab","n":"Acordes · Ultimate Guitar","st":"ok"},{"u":"https://www.youtube.com/watch?v=ae_UcKoljQw","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Guaraná","s":"Noche en vela","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=3VGrNu4uMos","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://www.youtube.com/watch?v=NjeGWvM1XGQ","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Iratxo","s":"Latidos contados","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=Lr3-rpN70d8","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Iratxo","s":"Si tú supieras","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=DnkiET65Klk","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://acordes.lacuerda.net/iratxo/si_tu_supieras","k":"tab","n":"Acordes · LaCuerda","st":"ok"}],"own":{"capo":"Cejilla en el 5º traste","notes":"La rueda de acordes es siempre la misma (como en el vídeo).","chords":"","tab":""}},{"a":"Ismael Serrano","s":"Mi vida no hay derecho","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/ismael_serrano/mi_vida_no_hay_derecho.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Ismael Serrano","s":"Recuerdo","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/ismael_serrano/recuerdo-2.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"https://www.youtube.com/watch?v=BOCKYL8CNxc","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Ismael Serrano","s":"Semana","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/ismael_serrano/semana.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Ismael Serrano","s":"Si se callase el ruido","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=qM38F7DYug4","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://acordes.lacuerda.net/ismael_serrano/si_se_callase_el_ruido-3.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Ismael Serrano","s":"Sin ti a mi lado","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/ismael_serrano/sin_ti_a_mi_lado_.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Ismael Serrano","s":"Te Vas","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/ismael_serrano/te_vas-2.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"https://www.youtube.com/watch?v=icOBgEnegls","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Ismael Serrano","s":"Vértigo","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=2JkQLL9zSs0","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://www.youtube.com/watch?v=SdE5F6UlpAM","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://acordes.lacuerda.net/ismael_serrano/vertigo-3.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Jarabe de Palo","s":"Agua","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=Sp9Dv57SHD0","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Jarabe de Palo","s":"La flaca (versión acústica)","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=BFqQCumJnbM","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://acordes.lacuerda.net/jarabe_de_palo/la_flaca_acustica","k":"tab","n":"Acordes · LaCuerda","st":"ok"}],"own":{"capo":"","notes":"Versión acústica arpegiada. Tablatura de 1ª (arriba) a 6ª cuerda (abajo).","chords":"Famaj7   SolM   Lam   MiM\nLam   Lam/Sol\nRe   Fa   Sol   Lam  (final)","tab":"Riff principal\n|-------------------|---------------------||---------------------|---------------------|\n|-----------0-------|------------0--------||--------1---1-0------|------1---1-0--------|\n|-------2-------2---|--------0-------0----||----------------2----|---------------2-----|\n|-----3---3---3---3-|------0---0---0---0--||------2---2-------2--|----2---2--------2---|\n|-------------------|---------------------||--0------------------|---------------------|\n|-1-----------------|---3-----------------||---------------------|--3------------------|\n\nEstrofa\n|-------------------|----------0----------|----------------------|----------------------|\n|------1----1-0-----|---------------------|------1----1-0--------|-------1----1-0-------|\n|---------------2---|------4--------4-----|---------------2------|----------------2-----|\n|----2---2--------2-|----2---2----2---2---|----2---2--------2----|-----2---2--------2---|\n|-------------------|---------------------|--0-------------------|----------------------|\n|-2-----------------|--4----------------4-|----------------------|---3------------------|\n\n|-------------------|----------0----------|----------------------|----------------------|\n|------1----1-0-----|---------------------|----------0-----------|----------------------|\n|---------------2---|------4--------4-----|------2--------2------|-------0----2/4\\2-0---|\n|----2---2--------2-|----2---2----2---2---|----3---3---3----3----|-----0---0------------|\n|-------------------|---------------------|----------------------|----------------------|\n|-2-----------------|--4------------------|--1-------------------|---3------------------|\n\n|----------0--------|---------2--3p2------|\n|--------1--1-------|-------3----3---3----|\n|------2------2-----|-----2------------2--|\n|----2----------2---|--0------------------|\n|-0---------------0-|---------------------|\n|-------------------|---------------------|\n\nEstribillo\n|--------0-------------|--------3-------------|----------0--------|-----------3p2-------|\n|------1---1-----------|------3---3-----------|------1-----1------|------3----3---3-----|\n|----2-------2----2----|----0-------0-----0---|----2---2-----2----|----2---2--------2---|\n|--3------------3------|----------------------|----------------2--|-0-------------------|\n|----------------------|----------------------|--0----------------|---------------------|\n|----------------------|--3------------3------|-------------------|---------------------|\n\nFamaj7 · SolM · Lam · MiM\n|--------0-------------|---------3---------|-----------0---------|----------------------|\n|------1---1-----------|-----3---------3---|-------1-----1----1--|--9-9---9-9-----------|\n|----2-------2---2-----|---0---0----0----0-|-----2---2-----2-----|--9-9---9-9-----------|\n|--3-----------3-------|-------------------|---------------------|--9-9---9-9-----------|\n|----------------------|-------------------|--0------------------|----------------------|\n|----------------------|-3-----------------|---------------------|----------------------|\n\nLam · Lam/Sol\n|----------------------|----------------------|\n|------1----1-0--------|-------1----1-0-------|\n|---------------2------|----------------2-----|\n|----2---2--------2----|-----2---2--------2---|\n|--0-------------------|----------------------|\n|----------------------|---3------------------|\n\nFinal\n|-------------------|----------0----------|-------0--------------|\n|------1----1-0-----|---------------------|------1---------------|\n|---------------2---|------4--------4-----|-----2----------------|\n|----2---2--------2-|----2---2----2---2---|----2-----------------|\n|-------------------|---------------------|--0-------------------|\n|-2-----------------|--4----------------4-|----------------------|"}},{"a":"Jarabe de Palo","s":"Toca mi canción","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/jarabe_de_palo/toca_mi_cancion-2.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Jesse & Joy","s":"Tanto","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=-PSHxgkAbG0","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Joan Manuel Serrat","s":"Lucia","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=MSARJXnB7NY","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://acordes.lacuerda.net/joan_m_serrat/lucia-3.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"https://www.youtube.com/watch?v=gvfWrP7BdD8","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Joaquín Calderón","s":"El olor del aire","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=ZBQv4rgKs1k","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"John Frusciante","s":"Ascension","t":"cancion","links":[{"u":"https://www.cifraclub.com/john-frusciante/ascension/","k":"tab","n":"Acordes · Cifra Club","st":"ok"}]},{"a":"John Frusciante","s":"Control","t":"cancion","links":[{"u":"https://www.cifraclub.com/john-frusciante/control/","k":"tab","n":"Acordes · Cifra Club","st":"ok"}]},{"a":"John Frusciante","s":"Hope","t":"cancion","links":[{"u":"https://www.cifraclub.com/john-frusciante/hope/","k":"tab","n":"Acordes · Cifra Club","st":"ok"}]},{"a":"John Frusciante","s":"The Past Recedes","t":"cancion","links":[{"u":"https://www.cifraclub.com/john-frusciante/the-past-recedes/","k":"tab","n":"Acordes · Cifra Club","st":"ok"}]},{"a":"John Frusciante","s":"Time tonight","t":"cancion","links":[{"u":"https://www.cifraclub.com/john-frusciante/time-tonight/","k":"tab","n":"Acordes · Cifra Club","st":"ok"}]},{"a":"Johnny Cash","s":"Hurt","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=3aF9AJm0RFc","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://tabs.ultimate-guitar.com/tab/johnny-cash/hurt-chords-89849","k":"tab","n":"Acordes · Ultimate Guitar","st":"ok"}]},{"a":"José Antonio Delgado","s":"La envidia del mundo","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/jose_antonio_delgado/la_envidia_del_mundo.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"https://www.youtube.com/watch?v=lw1xXcwWsOE","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"José Antonio Delgado","s":"Los locos son ellos","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=-iRHX82l4U0","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://acordes.lacuerda.net/jose_antonio_delgado/los_locos_son_ellos.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"José Antonio Delgado","s":"No te dolerá","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/jose_antonio_delgado/no_te_dolera.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"José Antonio Delgado","s":"Nostalgia","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/jose_antonio_delgado/nostalgia.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"https://www.youtube.com/watch?v=8Bp5EAJ9KsQ","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"José Antonio Delgado","s":"Si supieras","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/jose_antonio_delgado/si_supieras.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"https://www.youtube.com/watch?v=cAdS_8S8hQs","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"José Carlos Escobar","s":"Tiempo para echar de menos","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=c-Ovqz1zWyE","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"José Feliciano","s":"Oye guitarra mía","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/TXT/jose_feliciano/oye_guitarra_mia.txt","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Juan Luis Guerra","s":"La hormiguita","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=nrzmpBN2c1Q","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Juanito Makandé","s":"Arañando el aire","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=Wkb2U05lGpA","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Juanito Makandé","s":"Kamikaze","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=SimBfABnRiQ","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Juanito Makandé","s":"Niña voladora","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/juanito_makande/ninia_voladora.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"https://www.youtube.com/watch?v=bKI6MWapfr0","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://www.youtube.com/watch?v=eboiFOD5-_M","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://www.youtube.com/watch?v=7AYDwAL2Ido","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Juanito Makandé","s":"No te alejes","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/juanito_makande/no_te_alejes.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Juanito Makandé","s":"Segunda cancion de amor","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=F8NDH4Mu3TI","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://acordes.lacuerda.net/juanito_makande/segunda_cancion_de_amor","k":"tab","n":"Acordes · LaCuerda","st":"ok"}],"own":{"capo":"","notes":"Posiciones de 6ª a 1ª cuerda. Incluye puente hacia la segunda parte.","chords":"","shapes":["SI6: 0 2 1 1 X X","2 4 2 2 X X","4 6 4 4 X X","LAM7: 5 X 6 6 5 0","X 0 2 2 2 X","SI7: X 2 4 2 4 X","DO#m7: X 4 6 4 5 X","LAM7: 5 X 6 6 5 X","REM7: X 5 4 2 2 X","SI7: X 2 1 2 0 X"],"tab":""}},{"a":"Juanito Makandé","s":"Ya no soy un crio","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=5pRLQlXUYJg","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://acordes.lacuerda.net/juanito_makande/ya_no_soy_un_crio.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"La Fuga","s":"Por verte sonreír","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=9flve6g_WFQ","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://acordes.lacuerda.net/fuga/por_verte_sonreir.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"La Maravillosa Orquesta del Alcohol","s":"Vasos Vacíos","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=ZqSQ2UQlPSM","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://acordes.lacuerda.net/maravillosa_orquesta_del_alcohol/vasos_vacios.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"La Pegatina","s":"Y se fue","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=3nHH6-Eeni0","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Leonel García","s":"Miento","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/leonel_garcia/miento.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"https://www.youtube.com/watch?v=wAb0_OclHmo","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Leonel García","s":"Recuerdas","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/leonel_garcia/recuerdas-2.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"https://www.youtube.com/watch?v=ZIf7fApKYg0","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Los Delincuentes","s":"El aire de la calle","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=fVVrVbtHdcM","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Loukas","s":"Bagdag","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=XfsXDC3Jq3w","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Loukas","s":"Pienso en tu mirá (versión de Loukas)","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=44LsgEzBLDA","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Loukas","s":"Shallow / Dime algo ya (versión de Loukas)","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=b_tew48H56M","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Loukas","s":"Sin pijama","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=KOHOn6eDDPE","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Luis Fercán","s":"Mesa para dos","t":"cancion","links":[{"u":"https://es.ultimate-guitar.com/tab/luis-fercan/mesa-para-dos-chords-4455101","k":"tab","n":"Acordes · Ultimate Guitar","st":"ok"},{"u":"https://www.youtube.com/watch?v=1jNfa1WbVhg","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Luis Ramiro","s":"Duele","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/luis_ramiro/duele.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Luis Ramiro","s":"El monstruo del armario","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/luis_ramiro/el_monstruo_del_armario.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"https://www.youtube.com/watch?v=Lk-fc27hzqI","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Luis Ramiro","s":"Mi ultimo paisaje","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=gZELZ0gcy_A","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://acordes.lacuerda.net/luis_ramiro/mi_ultimo_paisaje.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Luis Ramiro","s":"Poemas en el tejado","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/luis_ramiro/poemas_en_el_tejado.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"https://www.youtube.com/watch?v=2i_69JyiJws","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Luis Ramiro","s":"Relocos y recuerdos","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/luis_ramiro/relocos_y_recuerdos.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"https://www.youtube.com/watch?v=RCdy4dcixzs","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Luis Ramiro","s":"Todo lo que nunca hice bien","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=sSnJwue_SGE","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://acordes.lacuerda.net/luis_ramiro/todo_lo_que_nunca_hice_bien.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Manu Guix","s":"En tres minutos","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=vrCVOJzl690","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Manzanita","s":"No me lo creo","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/manzanita/no_me_lo_creo-2.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"https://www.youtube.com/watch?v=rWp40cOGk4A","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Marea y Carlos Chaouen","s":"Pan duro","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/marea/pan_duro.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"https://www.youtube.com/watch?v=t1osJiKsR-8","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"María Ruiz","s":"Viento madera","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/maria_ruiz/viento__madera.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"https://www.youtube.com/watch?v=wvMz8zqq7iE","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Mario Díaz","s":"Inténtalo","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/mario_diaz/intentalo.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Mario Díaz","s":"Loco corazón","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/mario_diaz/loco_corazon.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Mario Díaz","s":"Se me fue la cabeza","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/mario_diaz/se_me_fue_la_cabeza","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"https://www.youtube.com/watch?v=ozUCdaRLlQc","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Marwan","s":"Cosas que no pude responder","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=3pJb09z9kso","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://acordes.lacuerda.net/marwan/cosas_que_no_pude_responder.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"http://vimeo.com/17367255","k":"video","n":"Vimeo","st":"ok"}]},{"a":"Marwan","s":"En mi cabeza","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=2DiymCzpiLY","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://acordes.lacuerda.net/marwan/en_mi_cabeza.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"https://www.youtube.com/watch?v=jvo3RdIe-pY","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Marwan","s":"Un día de estos","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/marwan/un_dia_de_estos.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"https://www.youtube.com/watch?v=LVS4h-ty81U","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Miguel Campello","s":"Aire","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/miguel_campello/aire.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"https://www.youtube.com/watch?v=4krnkq8hVvM","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Miguel Campello","s":"Chatarrero","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=oeAVCostmWs","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://www.youtube.com/watch?v=YpZxpnfctD8","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Miguel Campello","s":"Espineta","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/miguel_campello/espineta.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"https://www.youtube.com/watch?v=8cCQwnRG6FA","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Miguel Campello","s":"Lágrimas saladas","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=2wMhGWAy_zQ","k":"youtube","n":"Vídeo","st":"ok"}],"own":{"capo":"","notes":"Estructura por compases (x = repeticiones).","chords":"| Em x4 | Do x2 | Re x2 |","tab":""}},{"a":"Miguel Campello","s":"Lo tuyo y lo mio","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/miguel_campello/lo_tuyo_y_lo_mio.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Miguel Campello","s":"Si te vas","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=S8smKNEqWSY","k":"youtube","n":"Vídeo","st":"ok"}],"own":{"capo":"Cejilla en el 6º traste","notes":"","chords":"Lam   Sim7b5   Mi","tab":""}},{"a":"Mr Kilombo","s":"Baile de disfraces","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/mr_kilombo/baile_de_disfraces.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"https://www.youtube.com/watch?v=7u8JL2fbjwQ","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Mr Kilombo","s":"Entre tu espalda y la pared","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/mr_kilombo/entre_tu_espalda_y_la_pared.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"https://www.youtube.com/watch?v=V9TmsPH61fo","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Mr Kilombo","s":"Nosequé","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=NcS3ULnxcQk","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://acordesweb.com/cancion/mr-kilombo/noseque","k":"tab","n":"Acordes · AcordesWeb","st":"ok"}]},{"a":"Mr Kilombo","s":"Sin mirarme los pies","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/mr_kilombo/sin_mirarme_los_pies.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"https://www.youtube.com/watch?v=AlFPJGNihLk","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Mr Kilombo","s":"Sinmigo","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/mr_kilombo/sinmigo.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"https://www.youtube.com/watch?v=f6EAeasF0sM","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Mr Probz","s":"Waves","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=0a5WyAjL1MM","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://tabs.ultimate-guitar.com/tab/mr-probz/waves-chords-1398301","k":"tab","n":"Acordes · Ultimate Guitar","st":"ok"}]},{"a":"Navajita Plateá","s":"Noches de bohemia","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=jic380Hrsw4","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Neus Ferri","s":"No te alejes","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=TzctRR61-rI","k":"youtube","n":"Vídeo","st":"ok"}],"own":{"capo":"","notes":"Acorde especial: Lam* = X 2 0 0 1 0","chords":"Estrofa:\nDoM   Lam   DoM   Lam\nDoM   Lam   DoM   FaM\nDoM   Lam   DoM   Lam\nDoM   Lam   DoM   FaM\n\nEstribillo:\nSolM\nDoM   Lam*   Lam   FaM\nSolM\nDoM   Lam*   Lam\n\nPuente:\nRem   SolM7   Lam   Mim\nFaM   SolM    DoM   Lam*   Lam\nRem   SolM7   Lam\nDoM   SolM    FaM\n\nFinal: DoM  Lam  DoM  Lam / DoM  Lam  DoM  FaM","tab":""}},{"a":"Nil Moliner","s":"Soldadito de hierro","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/nil_moliner/soldadito_de_hierro.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Niña Pastori","s":"Válgame Dios","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=b5vscwKI4do","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://www.youtube.com/watch?v=wiux6ALPN1g","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://www.youtube.com/watch?v=zPtoETR_qxY","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Nolasco","s":"Cosas pequeñitas","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=QWixcAWJk-w","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://acordes.lacuerda.net/nolasco/las_cosas_pequeniitas-3.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Paco Bello","s":"Ella no está","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=DLpuLc-SL1Q","k":"youtube","n":"Vídeo","st":"ok"}],"own":{"capo":"","notes":"","chords":"Estrofa:\nSol   Do   Re\nSol   Do\nSol   Do   Re\n\nEstribillo:\nSol   Do   Re\nDo    Sol","tab":""}},{"a":"Paco Bello","s":"Entre pitos y flautas","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/paco_bello/entre_pitos_y_flautas.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Paco Bello","s":"Lo de dentro","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=4fIxqL9peQ8","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://acordes.lacuerda.net/paco_bello/lo_de_dentro.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Paco Bello","s":"No sabes cuanto te he querido","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/paco_bello/no_sabes_cuanto_te_he_querido-2.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Paco Bello","s":"Ojos y legañas","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/paco_bello/ojos_y_leganias.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Paco Bello","s":"Ya ves tú","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/paco_bello/ya_ves_tu.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"https://www.youtube.com/watch?v=4pZd-fpn3Kw","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Paco Cifuentes","s":"El epicentro","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=VlxmoZSH0sU","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://acordes.lacuerda.net/paco_cifuentes/epicentro.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Paco Cifuentes","s":"Tu boca","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/paco_cifuentes/tu_boca.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Passenger","s":"Let Her Go","t":"cancion","links":[{"u":"https://tabs.ultimate-guitar.com/tab/passenger/let-her-go-chords-1137467","k":"tab","n":"Acordes · Ultimate Guitar","st":"ok"},{"u":"https://www.youtube.com/watch?v=RBumgq5yVrA","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Patricia Lázaro","s":"Despierto","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/patricia_lazaro/despierto.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Pedro Guerra","s":"Siete puertas","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/pedro_guerra/siete_puertas-3.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"https://www.youtube.com/watch?v=bnnXA-N0OrE","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Pepo","s":"No quiero que","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=JsEUSJBIie4","k":"youtube","n":"Vídeo","st":"ok"}],"own":{"capo":"","notes":"Dos ruedas de acordes que se alternan y luego estribillo.","chords":"Primera rueda:\nSolm7  Rem7  Re#Maj7  Dom7  Rem7\n\nSegunda rueda:\nSolm7  FaM7  Dom7  Rem7","tab":""}},{"a":"Pereza","s":"Ella tiene un don","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=4cnKVNBuUHQ","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://acordes.lacuerda.net/pereza/ella_tiene_un_don.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Rafa Pons","s":"Malaputa","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=_60DSrQecbU","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://acordes.lacuerda.net/rafa_pons/malaputa.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Rafa Pons","s":"Olvidate de ti","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/rafa_pons/olvidate_de_ti.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Raule","s":"Colega antibalas","t":"cancion","links":[{"u":"https://acordesweb.com/cancion/raule/colega-antibalas","k":"tab","n":"Acordes · AcordesWeb","st":"ok"},{"u":"https://www.youtube.com/watch?v=Xvo06DLGacg","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Raule","s":"Cruje la cama","t":"cancion","links":[{"u":"https://acordesweb.com/cancion/raule/cruje-la-cama","k":"tab","n":"Acordes · AcordesWeb","st":"ok"},{"u":"https://www.youtube.com/watch?v=TgoZAK0gTDM","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Raule","s":"Niño Salvaje","t":"cancion","links":[{"u":"https://acordesweb.com/cancion/raule/nino-salvaje-ft-javi-medina","k":"tab","n":"Acordes · AcordesWeb","st":"ok"},{"u":"https://www.youtube.com/watch?v=Fw8ZrYJANtU","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Ricardo Arjona","s":"Historia de taxi","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=-apU2sviHCM","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://acordes.lacuerda.net/ricardo_arjona/historia_de_taxi-5.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Rulo y la Contrabanda","s":"Divididos","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/rulo_y_la_contrabanda/divididos.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"https://www.youtube.com/watch?v=vLJyCTI7_Ew","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Rupatrupa","s":"Playa libertad","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=MGzQ-EYl2a8","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Señor Nadye","s":"Crujo","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=jJo-Ttro7eU","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Sr Trepador","s":"Dame un grito","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=eOOHQu_Iivo","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://acordes.lacuerda.net/sr_trepador/dame_un_grito-2.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Tiza","s":"Donde no te ve nadie","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/tiza/donde_no_te_ve_nadie.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"https://www.youtube.com/watch?v=pChRfCICVhg","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Tiza","s":"El hombre del frío","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/tiza/el_hombre_del_frio.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"https://www.youtube.com/watch?v=MlXFNtmzTJg","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Tiza","s":"Háblame","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/tiza/hablame.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"https://www.youtube.com/watch?v=5TS-ljgmZcQ","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Tiza","s":"La agonía de los besos","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/tiza/la_agonia_de_los_besos.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"},{"u":"https://www.youtube.com/watch?v=BCSNCRH50-M","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"Vicente García","s":"Dulcito de coco","t":"cancion","links":[{"u":"https://acordes.lacuerda.net/vicente_garcia/dulcito_de_coco-2.shtml","k":"tab","n":"Acordes · LaCuerda","st":"ok"}]},{"a":"Zahara y Love of Lesbian","s":"Lucha de gigantes","t":"cancion","links":[{"u":"https://www.youtube.com/watch?v=F_zz4IYxFy4","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"","s":"Acordes abiertos","t":"recurso","links":[{"u":"https://www.youtube.com/watch?v=zftl8nz3LJo","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"","s":"Armonía moderna","t":"recurso","links":[{"u":"https://www.youtube.com/watch?v=NbG_oa28QkA","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"","s":"Bases de acordes para improvisar","t":"recurso","links":[{"u":"https://www.youtube.com/user/abdobicas","k":"youtube","n":"Canal de YouTube","st":"ok"},{"u":"https://www.youtube.com/watch?v=IKkmRUea1rQ","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"","s":"Chanson pour l'Auvergnat guitar","t":"recurso","links":[{"u":"https://www.youtube.com/watch?v=sODA4MmTNOs","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"","s":"Compas bulerias","t":"recurso","links":[{"u":"https://www.youtube.com/watch?v=irk1fB8Q0BA","k":"youtube","n":"Vídeo","st":"ok"},{"u":"https://www.youtube.com/watch?v=lrVjw76bh5E","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"","s":"Generador de escalas","t":"recurso","links":[{"u":"https://www.all-guitar-chords.com/chords/scales","k":"web","n":"all-guitar-chords.com","st":"ok"}]},{"a":"","s":"Grupos de flamenco en YouTube","t":"recurso","links":[{"u":"https://www.youtube.com/user/malejelumaja","k":"youtube","n":"Canal de YouTube","st":"ok"},{"u":"https://www.youtube.com/user/CanteOnline","k":"youtube","n":"Canal de YouTube","st":"ok"},{"u":"https://www.youtube.com/user/ToniFlamadeus","k":"youtube","n":"Canal de YouTube","st":"ok"}]},{"a":"","s":"Libros de guitarra","t":"recurso","links":[{"u":"https://www.classclef.com/book-source/","k":"web","n":"classclef.com","st":"ok"}]},{"a":"","s":"Para banjo","t":"recurso","links":[{"u":"https://www.youtube.com/watch?v=3jJGlVwm6m8","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"","s":"Percussive Acoustic Guitar Techniques - Exercise 2","t":"recurso","links":[{"u":"https://www.youtube.com/watch?v=H-v7Dx_0cR0","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"","s":"Plantillas para tablaturas y acordes","t":"recurso","links":[{"u":"https://www.justinguitar.com/guitar-lessons/blank-necks-diagrams-chord-boxes-bp-100","k":"tab","n":"Acordes · JustinGuitar","st":"ok"},{"u":"https://www.justinguitar.com/guitar-lessons/blank-tab-paper-bp-200","k":"tab","n":"Acordes · JustinGuitar","st":"ok"}],"own":{"notes":"Plantillas en PDF de JustinGuitar: diagramas de acordes y pentagramas de tablatura en blanco."}},{"a":"","s":"Star Wars Theme","t":"recurso","links":[{"u":"https://www.youtube.com/watch?v=TVEcOOvS4CU","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"","s":"Tutorial de flamenco","t":"recurso","links":[{"u":"https://www.youtube.com/watch?v=seQv8SdxBD4","k":"youtube","n":"Vídeo","st":"ok"}]},{"a":"","s":"Ukeleles","t":"recurso","links":[{"u":"https://ukulele-chords.com/charts","k":"tab","n":"Acordes · ukulele-chords.com","st":"ok"},{"u":"https://www.ukulele-tabs.com/es/","k":"web","n":"ukulele-tabs.com","st":"ok"}],"own":{"notes":"Recursos para ukelele: tabla de acordes y web de tablaturas."}},{"a":"","s":"Web con bases de ritmos","t":"recurso","links":[{"u":"https://www.youtube.com/watch?v=TZTk_2JWgk8","k":"youtube","n":"Vídeo","st":"ok"}]}];
@@ -233,48 +229,112 @@ const initials = a => a.replace(/^(El|La|Los|Las)\s+/,'').split(/\s+/).slice(0,2
 const $ = s => document.querySelector(s);
 const norm = s => (s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const EMBEDDABLE = /(^|\.)(lacuerda\.net|acordesweb\.com|cifraclub\.com)$/;
+const hostOf = u => { try { return new URL(u).hostname.replace(/^www\./,''); } catch(e) { return ''; } };
+const ytId = u => { const m = u.match(/(?:v=|youtu\.be\/|embed\/)([\w-]{11})/); return m && /youtu/.test(u) ? m[1] : null; };
 
 DATA.forEach((g,i) => {
   g.i = i;
-  g.hasVideo = g.links.some(l => l.k==='youtube'||l.k==='video');
-  g.hasTab = g.links.some(l => l.k==='tab');
-  g.hay = norm([g.a,g.s,g.links.map(l=>l.n+' '+l.u+' '+(l.alt?l.alt.label:'')).join(' '),g.own?Object.values(g.own).flat().join(' '):''].join(' '));
+  g.videos = g.links.filter(l => ytId(l.u));
+  g.tabs = g.links.filter(l => l.k==='tab' || l.k==='web');
+  g.mine = !!(g.own && (g.own.chords||g.own.tab||g.own.shapes||g.own.capo));
+  g.slug = norm(`${g.a} ${g.s}`).replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  g.hay = norm([g.a,g.s,g.links.map(l=>l.n).join(' '),g.own?Object.values(g.own).flat().join(' '):''].join(' '));
 });
-
 const songs = DATA.filter(g => g.t==='cancion');
 const artists = {}; songs.forEach(g => { if (g.a) artists[g.a] = (artists[g.a]||0)+1; });
-const totalLinks = DATA.reduce((n,g)=>n+g.links.length,0);
-$('#stats').innerHTML = [
-  [songs.length,'canciones'],[Object.keys(artists).length,'artistas'],[DATA.filter(g=>g.own).length,'con acordes míos'],
-  [totalLinks,'enlaces comprobados']
-].map(([n,t])=>`<li><b>${n}</b> ${t}</li>`).join('');
+$('#stats').innerHTML = [[songs.length,'canciones'],[Object.keys(artists).length,'artistas'],[DATA.filter(g=>g.mine).length,'con mis acordes']]
+  .map(([n,t])=>`<li><b>${n}</b><span>${t}</span></li>`).join('');
+
+/* Diapasón: trastes, cuerdas, incrustaciones y un La menor */
+(function fret(){
+  const W=1400,H=150,frets=15,x0=-20,step=W/ (frets-1), sy=[22,43,64,86,107,128];
+  let s=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><defs><linearGradient id="wd" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#2a1c15"/><stop offset="1" stop-color="#1b1310"/></linearGradient></defs><rect width="${W}" height="${H}" fill="url(#wd)"/>`;
+  for(let f=0;f<frets;f++){ const x=x0+f*step; s+=`<rect x="${x}" y="8" width="${f===0?9:4}" height="${H-16}" fill="${f===0?'#e9dcc6':'#b98b4f'}" opacity="${f===0?.9:.75}"/>`; }
+  [3,5,7,9].forEach(f=>{ const x=x0+(f-.5)*step; s+=`<circle cx="${x}" cy="75" r="7" fill="#7CCAB9" opacity=".55"/>`; });
+  [[12,54],[12,97]].forEach(([f,y])=>{ const x=x0+(f-.5)*step; s+=`<circle cx="${x}" cy="${y}" r="7" fill="#7CCAB9" opacity=".55"/>`; });
+  sy.forEach((y,i)=>{ const w=[1,1.3,1.7,2.2,2.8,3.4][i]; s+=`<g class="str"><rect x="0" y="${y-w/2}" width="${W}" height="${w}" fill="#cbcfd4" opacity=".85"/></g>`; });
+  // La menor (Am): cuerda 2 traste 1, cuerdas 4 y 3 traste 2
+  [[1,1],[3,2],[2,2]].forEach(([str,f])=>{ const x=x0+(f-.5)*step, y=sy[str]; s+=`<circle class="dot" cx="${x}" cy="${y}" r="11" fill="#E2A55A" stroke="#1b1310" stroke-width="3"/>`; });
+  $('#fret').innerHTML = s+'</svg>';
+})();
 
 const FILTERS = [
   ['all','Todo',()=>true],
-  ['own','Acordes míos',g=>!!g.own],
-  ['video','Con vídeo',g=>g.hasVideo],
+  ['own','Con mis acordes',g=>g.mine],
+  ['video','Con vídeo',g=>g.videos.length>0],
+  ['tab','Con acordes web',g=>g.tabs.length>0 && g.t==='cancion'],
   ['res','Recursos',g=>g.t==='recurso'],
-  ['tab','Con acordes web',g=>g.hasTab],
 ];
 const state = {q:'', f:'all', a:null, sort:'artist'};
 try { const s = JSON.parse(localStorage.getItem('tabs-state')||'{}'); if (s.sort==='artist'||s.sort==='song') state.sort = s.sort; } catch(e) {}
 $('#sort').value = state.sort;
-
 $('#chips').innerHTML = FILTERS.map(([k,t,fn]) => `<button class="chip" data-f="${k}" aria-pressed="${k===state.f}">${t}<span class="n">${DATA.filter(fn).length}</span></button>`).join('');
-$('#artists').innerHTML = `<li><button data-a="" aria-pressed="true">Todos <span>${songs.length}</span></button></li>` +
-  Object.entries(artists).sort((a,b)=>a[0].localeCompare(b[0],'es')).map(([a,n])=>`<li><button data-a="${esc(a)}" aria-pressed="false">${avOf(a)?`<img class="mini" src="${avOf(a)}" alt="">`:''}<span class="nm">${esc(a)}</span> <span>${n}</span></button></li>`).join('');
+$('#artists').innerHTML = `<button data-a="" aria-pressed="true"><span class="ring"><i>♪</i></span><span class="nm">Todos</span></button>` +
+  Object.keys(artists).sort((a,b)=>a.localeCompare(b,'es')).map(a=>`<button data-a="${esc(a)}" aria-pressed="false" title="${esc(a)} · ${artists[a]}"><span class="ring">${avOf(a)?`<img src="${avOf(a)}" alt="" loading="lazy">`:`<i>${esc(initials(a))}</i>`}</span><span class="nm">${esc(a)}</span></button>`).join('');
 
-const ICON = {
-  youtube:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>',
-  video:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="m16 10 5-3v10l-5-3"/></svg>',
-  tab:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 10h16M4 14h16M4 18h16M9 4v16"/></svg>',
-  web:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg>'
+const IC = {
+  v:'<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>',
+  t:'<svg viewBox="0 0 24 24"><path d="M4 6h16M4 10h16M4 14h16M4 18h16M9 4v16"/></svg>',
+  play:'<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>',
+  res:'<svg viewBox="0 0 24 24"><path d="M4 5h11l5 5v9H4z"/><path d="M15 5v5h5"/></svg>'
 };
-const linkHTML = l => {
-  const ic = ICON[l.k] || ICON.web, cls = l.k==='youtube'?'yt':l.k;
-  return `<a class="alink ${cls}" href="${esc(l.u)}" target="_blank" rel="noopener">${ic}${esc(l.n)}</a>`;
-};
+const pic = (g,cls='av') => g.t==='recurso' ? `<div class="${cls} res" aria-hidden="true">${IC.res}</div>`
+  : (avOf(g.a) ? `<div class="${cls}"><img src="${avOf(g.a)}" alt="" loading="lazy"></div>` : `<div class="${cls}" aria-hidden="true">${esc(initials(g.a||'?'))}</div>`);
 
+function card(g){
+  const f = [];
+  if (g.mine) f.push(`<span class="ft mine">Mis acordes</span>`);
+  g.tabs.forEach(l => f.push(`<span class="ft t">${IC.t}${esc(l.n.replace('Acordes · ',''))}</span>`));
+  if (g.videos.length) f.push(`<span class="ft v">${IC.v}${g.videos.length>1?g.videos.length+' vídeos':'Vídeo'}</span>`);
+  return `<li class="card" tabindex="0" role="button" data-p="${g.i}" aria-label="Practicar ${esc(g.s)}${g.a?' de '+esc(g.a):''}">
+    ${pic(g)}<div><h3>${esc(g.s)}</h3><p class="by">${esc(g.a||'Recurso')}</p></div>
+    <div class="feats">${f.join('')}</div><span class="go" aria-hidden="true">${IC.play}</span></li>`;
+}
+
+function render(){
+  const q = norm(state.q).split(/\s+/).filter(Boolean);
+  const fn = FILTERS.find(f=>f[0]===state.f)[2];
+  const rows = DATA.filter(g => fn(g) && (!state.a || g.a===state.a) && q.every(w => g.hay.includes(w)));
+  const key = g => state.sort==='song' ? g.s : g.a;
+  rows.sort((a,b)=> a.t!==b.t ? (a.t==='recurso'?1:-1) : key(a).localeCompare(key(b),'es') || a.s.localeCompare(b.s,'es'));
+  $('#count').textContent = rows.length===1 ? '1 resultado' : `${rows.length} resultados`;
+  $('#sectitle').textContent = state.a || 'Canciones';
+  if (!rows.length) { $('#list').innerHTML = `<p class="empty">No hay nada que coincida con la búsqueda. Prueba con otra palabra o pulsa "Todo".</p>`; return; }
+  const groups = [];
+  rows.forEach(g => { const L = g.t==='recurso' ? 'Recursos' : (norm(key(g).replace(/^(el|la|los|las)\s+/i,''))[0]||'#').toUpperCase(); const last=groups[groups.length-1];
+    if (!last || last.L!==L) groups.push({L, items:[g]}); else last.items.push(g); });
+  $('#list').innerHTML = groups.map(gr => `<div class="group"><div class="letter"${gr.L.length>1?' style="font-size:1.6rem"':''}>${esc(gr.L)}</div><ul class="cards">${gr.items.map(card).join('')}</ul></div>`).join('');
+  observe();
+}
+
+/* Entrada suave de tarjetas al hacer scroll (las ya visibles no se animan) */
+let io;
+function observe(){
+  if (!('IntersectionObserver' in window)) return;
+  io && io.disconnect();
+  io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), {rootMargin:'0px 0px -40px 0px'});
+  const vh = innerHeight;
+  document.querySelectorAll('.card').forEach(c => { if (c.getBoundingClientRect().top > vh) io.observe(c); });
+}
+
+$('#q').addEventListener('input', e => { state.q = e.target.value; render(); });
+$('#sort').addEventListener('change', e => { state.sort = e.target.value; try{localStorage.setItem('tabs-state',JSON.stringify({sort:state.sort}))}catch(err){} render(); });
+$('#chips').addEventListener('click', e => { const b = e.target.closest('.chip'); if(!b) return; state.f = b.dataset.f;
+  document.querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed', c===b)); render(); });
+$('#artists').addEventListener('click', e => { const b=e.target.closest('button'); if(!b) return; state.a = b.dataset.a||null;
+  document.querySelectorAll('#artists button').forEach(x=>x.setAttribute('aria-pressed', x===b)); render();
+  const top = $('.sec').getBoundingClientRect().top + scrollY - 80; if (scrollY > top || state.a) scrollTo({top, behavior:'smooth'}); });
+
+/* Barra fija con fondo al despegarse + paralaje del diapasón */
+const tools = $('#tools'), fretEl = $('#fret');
+const motionOK = matchMedia('(prefers-reduced-motion: no-preference)').matches;
+addEventListener('scroll', () => {
+  tools.classList.toggle('stuck', tools.getBoundingClientRect().top <= 0 && scrollY > 40);
+  if (motionOK && scrollY < 600) fretEl.style.transform = `translateY(${scrollY*0.25}px)`;
+}, {passive:true});
+
+/* Diagramas y contenido propio */
 function chordSVG(raw){
   let label = '', s = raw;
   const m = raw.match(/^([^:]+):\s*(.*)$/); if (m) { label = m[1]; s = m[2]; }
@@ -283,115 +343,81 @@ function chordSVG(raw){
   const pos = f.filter(x=>x>0), max = Math.max(0,...pos), min = pos.length?Math.min(...pos):1;
   const base = max>4 ? min : 1, W=78, H=96, x0=12, gx=(W-24)/5, y0=20, gy=15;
   let g = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Diagrama ${esc(raw)}">`;
-  g += base===1 ? `<rect x="${x0}" y="${y0-3}" width="${gx*5}" height="3" fill="var(--fg)"/>` : `<text x="${W-1}" y="${y0+gy/2+4}" font-size="9" text-anchor="end" fill="var(--muted)" font-family="var(--mono)">${base}</text>`;
-  for (let i=0;i<=5;i++) g += `<line x1="${x0}" y1="${y0+i*gy}" x2="${x0+gx*5}" y2="${y0+i*gy}" stroke="var(--fret)" stroke-width="1"/>`;
-  for (let i=0;i<6;i++) g += `<line x1="${x0+i*gx}" y1="${y0}" x2="${x0+i*gx}" y2="${y0+gy*5}" stroke="var(--muted)" stroke-width="${1+(5-i)*.25}"/>`;
+  g += base===1 ? `<rect x="${x0}" y="${y0-3}" width="${gx*5}" height="3" fill="#F4EADC"/>` : `<text x="${W-1}" y="${y0+gy/2+4}" font-size="9" text-anchor="end" fill="#B9A693">${base}</text>`;
+  for (let i=0;i<=5;i++) g += `<line x1="${x0}" y1="${y0+i*gy}" x2="${x0+gx*5}" y2="${y0+i*gy}" stroke="#b98b4f" stroke-width="1"/>`;
+  for (let i=0;i<6;i++) g += `<line x1="${x0+i*gx}" y1="${y0}" x2="${x0+i*gx}" y2="${y0+gy*5}" stroke="#CBCFD4" stroke-width="${1+(5-i)*.25}"/>`;
   f.forEach((v,i)=>{ const x=x0+i*gx;
-    if (v===null) g += `<text x="${x}" y="${y0-7}" font-size="9" text-anchor="middle" fill="var(--muted)" font-family="var(--mono)">×</text>`;
-    else if (v===0) g += `<circle cx="${x}" cy="${y0-9}" r="3" fill="none" stroke="var(--muted)"/>`;
-    else { const r=v-base+1; if (r>=1&&r<=5) g += `<circle cx="${x}" cy="${y0+(r-.5)*gy}" r="4.6" fill="var(--accent)"/>`; }
+    if (v===null) g += `<text x="${x}" y="${y0-7}" font-size="9" text-anchor="middle" fill="#B9A693">×</text>`;
+    else if (v===0) g += `<circle cx="${x}" cy="${y0-9}" r="3" fill="none" stroke="#B9A693"/>`;
+    else { const r=v-base+1; if (r>=1&&r<=5) g += `<circle cx="${x}" cy="${y0+(r-.5)*gy}" r="4.6" fill="#E2A55A"/>`; }
   });
   return `<div class="shape">${g}</svg><span>${esc(label||s)}</span></div>`;
 }
-
 function ownHTML(o){
-  const parts = [];
-  if (o.capo) parts.push(`<div class="capo">Cejilla · <b>${esc(o.capo.replace(/^(Cejilla|Capo)\s*/i,''))}</b></div>`);
-  if (o.notes) parts.push(`<p class="note">${esc(o.notes)}</p>`);
-  if (o.chords) parts.push(`<pre class="chords">${esc(o.chords)}</pre>`);
-  if (o.shapes) parts.push(`<div class="shapes">${o.shapes.map(chordSVG).join('')}</div>`);
-  if (o.tab) parts.push(`<pre>${esc(o.tab)}</pre>`);
-  const music = o.chords||o.shapes||o.tab||o.capo;
-  return { html: parts.join(''), label: music ? 'Mis acordes y notas' : 'Notas', music };
+  const p = [];
+  if (o.capo) p.push(`<div class="capo">Cejilla: <b>${esc(o.capo.replace(/^(Cejilla|Capo)\s*/i,''))}</b></div>`);
+  if (o.notes) p.push(`<p class="note">${esc(o.notes)}</p>`);
+  if (o.chords) p.push(`<pre>${esc(o.chords)}</pre>`);
+  if (o.shapes) p.push(`<div class="shapes">${o.shapes.map(chordSVG).join('')}</div>`);
+  if (o.tab) p.push(`<pre>${esc(o.tab)}</pre>`);
+  return p.join('');
 }
 
-function render(){
-  const q = norm(state.q).split(/\s+/).filter(Boolean);
-  const fn = FILTERS.find(f=>f[0]===state.f)[2];
-  let rows = DATA.filter(g => fn(g) && (!state.a || g.a===state.a) && q.every(w => g.hay.includes(w)));
-  const cmp = {artist:(a,b)=>a.a.localeCompare(b.a,'es')||a.s.localeCompare(b.s,'es'), song:(a,b)=>a.s.localeCompare(b.s,'es')}[state.sort];
-  rows.sort((a,b)=>(a.t===b.t?cmp(a,b):(a.t==='recurso'?1:-1)));
-  $('#count').textContent = rows.length===1 ? '1 entrada' : `${rows.length} entradas`;
-  $('#list').innerHTML = rows.length ? rows.map(g => {
-    const own = g.own ? ownHTML(g.own) : null;
-    const tags = [g.t==='recurso'?'<span class="tag res">recurso</span>':'', own&&own.music?'<span class="tag">acordes míos</span>':''].join('');
-    const pic = g.t==='recurso' ? `<div class="av res" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5h11l5 5v9H4z"/><path d="M15 5v5h5"/></svg></div>`
-      : (avOf(g.a) ? `<div class="av"><img src="${avOf(g.a)}" alt="${esc(g.a)}" loading="lazy"></div>` : `<div class="av" aria-hidden="true">${esc(initials(g.a||'?'))}</div>`);
-    return `<li class="song">
-      ${pic}
-      <div><div class="ttl"><h3>${g.canPractice?`<button data-p="${g.i}">${esc(g.s)}</button>`:esc(g.s)}</h3>${g.a?`<span class="art"><button data-a="${esc(g.a)}">${esc(g.a)}</button></span>`:''}<span class="tags">${tags}</span></div></div>
-      ${g.links.length||g.canPractice?`<div class="links">${g.canPractice?`<button class="play" data-p="${g.i}"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>Practicar</button>`:''}${g.links.map(linkHTML).join('')}</div>`:''}
-      ${own?`<details class="own"${state.f==='own'?' open':''}><summary>${own.label}</summary><div class="ownbody">${own.html}</div></details>`:''}
-    </li>`;
-  }).join('') : `<li class="empty">No hay nada que coincida. Prueba con otra palabra o quita los filtros.</li>`;
-}
-
-$('#q').addEventListener('input', e => { state.q = e.target.value; render(); });
-$('#sort').addEventListener('change', e => { state.sort = e.target.value; try{localStorage.setItem('tabs-state',JSON.stringify({sort:state.sort}))}catch(err){} render(); });
-$('#chips').addEventListener('click', e => { const b = e.target.closest('.chip'); if(!b) return; state.f = b.dataset.f;
-  document.querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed', c===b)); render(); });
-function pickArtist(a){ state.a = a||null;
-  document.querySelectorAll('#artists button').forEach(b=>b.setAttribute('aria-pressed', (b.dataset.a||null)===state.a));
-  render(); window.scrollTo({top: document.querySelector('.bar').offsetTop, behavior:'smooth'}); }
-$('#artists').addEventListener('click', e => { const b=e.target.closest('button'); if(b) pickArtist(b.dataset.a); });
-$('#list').addEventListener('click', e => { const b=e.target.closest('.art button'); if(b) pickArtist(b.dataset.a); });
-render();
-
-// ---- Modo práctica ----
-const EMBEDDABLE = /(^|\.)(lacuerda\.net|acordesweb\.com|cifraclub\.com)$/;
-const hostOf = u => { try { return new URL(u).hostname.replace(/^www\./,''); } catch(e) { return ''; } };
-const ytId = u => { const m = u.match(/(?:v=|youtu\.be\/|embed\/)([\w-]{11})/); return m && /youtu/.test(u) ? m[1] : null; };
-const slug = g => norm(`${g.a} ${g.s}`).replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
-DATA.forEach(g => { g.slug = slug(g);
-  g.videos = g.links.filter(l => ytId(l.u));
-  g.tabs = g.links.filter(l => l.k==='tab' || (l.k==='web'));
-  g.canPractice = !!(g.own && (g.own.chords||g.own.tab||g.own.shapes)) || g.tabs.length>0 || g.videos.length>0; });
-const PIP_SIZES = ['240px','320px','440px'];
+/* ---- Modo práctica ---- */
+const PIP_SIZES = ['240px','320px','460px'];
 const pipState = { size: 1, corner: 0 };
 try { Object.assign(pipState, JSON.parse(localStorage.getItem('tabs-pip')||'{}')); } catch(e) {}
 const savePip = () => { try { localStorage.setItem('tabs-pip', JSON.stringify(pipState)); } catch(e) {} };
-function applyPip(){ const p=$('#pip'); p.style.setProperty('--pip-w', innerWidth<700 ? ['44vw','58vw','80vw'][pipState.size] : PIP_SIZES[pipState.size]);
+function applyPip(){ const p=$('#pip'); p.style.setProperty('--pip-w', innerWidth<760 ? ['44vw','58vw','86vw'][pipState.size] : PIP_SIZES[pipState.size]);
   p.classList.toggle('top', pipState.corner===1||pipState.corner===2); p.classList.toggle('left', pipState.corner===2||pipState.corner===3); }
-let cur = null;
+let cur = null, lastFocus = null;
 function sources(g){
   const s = [];
-  if (g.own && (g.own.chords||g.own.tab||g.own.shapes||g.own.capo)) s.push({kind:'own', label:'Mis acordes'});
+  if (g.mine || (g.own && g.own.notes && !g.tabs.length)) s.push({kind:'own', label:'Mis acordes'});
   g.tabs.forEach(l => s.push({kind: EMBEDDABLE.test(hostOf(l.u)) ? 'frame' : 'ext', label: l.n.replace('Acordes · ',''), u: l.u}));
   return s;
 }
 function showSource(g, i){
-  const s = sources(g)[i]; const main = $('#p-main');
+  const s = sources(g)[i], main = $('#p-main'), open = $('#p-open');
   document.querySelectorAll('#p-src .pbtn').forEach((b,k)=>b.setAttribute('aria-pressed', k===i));
-  const open = $('#p-open');
   if (!s) { main.innerHTML = `<div class="nolink"><p>Esta canción solo tiene vídeo.</p></div>`; open.hidden = true; return; }
-  if (s.kind==='own') { main.innerHTML = `<div class="ownview">${ownHTML(g.own).html}</div>`; open.hidden = true; return; }
+  if (s.kind==='own') { main.innerHTML = `<div class="ownview">${ownHTML(g.own)}</div>`; open.hidden = true; return; }
   open.hidden = false; open.href = s.u;
   if (s.kind==='frame') main.innerHTML = `<iframe class="tabframe" src="${esc(s.u)}" title="Acordes de ${esc(g.s)}" referrerpolicy="no-referrer"></iframe>`;
-  else main.innerHTML = `<div class="nolink"><p>${esc(s.label)} no deja mostrar sus páginas dentro de otra web.</p><a class="play" href="${esc(s.u)}" target="_blank" rel="noopener">Abrir en ${esc(s.label)} ↗</a></div>`;
+  else main.innerHTML = `<div class="nolink"><p>${esc(s.label)} no deja mostrar sus páginas dentro de otra web.</p><a class="cta" href="${esc(s.u)}" target="_blank" rel="noopener">Abrir en ${esc(s.label)}</a></div>`;
 }
 function showVideo(g, i){
   const v = g.videos[i], box = $('#p-vid');
   document.querySelectorAll('#p-vsel button').forEach((b,k)=>b.setAttribute('aria-pressed', k===i));
   if (!v) { box.innerHTML = `<div class="novid">Sin vídeo</div>`; return; }
-  if (v.ne) { box.innerHTML = `<div class="novid">Este vídeo solo se puede ver en YouTube.<a href="${esc(v.u)}" target="_blank" rel="noopener">Abrir en YouTube ↗</a></div>`; return; }
+  if (v.ne) { box.innerHTML = `<div class="novid">Este vídeo solo se puede ver en YouTube.<a href="${esc(v.u)}" target="_blank" rel="noopener" style="color:#fff">Abrir en YouTube</a></div>`; return; }
   box.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${ytId(v.u)}?rel=0&playsinline=1" title="Vídeo de ${esc(g.s)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
 }
-function openPractice(g){
-  cur = g;
+function openPractice(g, from){
+  cur = g; lastFocus = document.activeElement;
+  const pr = $('#practice');
+  if (from) { const r = from.getBoundingClientRect(); pr.style.setProperty('--x', (r.left+r.width/2)+'px'); pr.style.setProperty('--y', (r.top+r.height/2)+'px'); }
+  else { pr.style.setProperty('--x','50%'); pr.style.setProperty('--y','50%'); }
   $('#p-title').textContent = g.s; $('#p-who').textContent = g.a || 'Recurso';
-  $('#p-av').innerHTML = avOf(g.a) ? `<div class="av"><img src="${avOf(g.a)}" alt=""></div>` : `<div class="av">${esc(initials(g.a||'R'))}</div>`;
+  $('#p-av').innerHTML = pic(g);
   const src = sources(g);
   $('#p-src').innerHTML = src.length>1 ? src.map((s,i)=>`<button class="pbtn" data-i="${i}">${esc(s.label)}</button>`).join('') : '';
   $('#p-vsel').innerHTML = g.videos.length>1 ? g.videos.map((v,i)=>`<button data-v="${i}">Vídeo ${i+1}</button>`).join(' ') : '';
   $('#pip').hidden = g.videos.length===0;
   applyPip(); showSource(g,0); if (g.videos.length) showVideo(g,0);
-  $('#practice').hidden = false; document.body.style.overflow='hidden';
+  pr.classList.remove('closing'); pr.hidden = false; pr.classList.add('opening');
+  document.body.style.overflow='hidden';
   if (location.hash !== '#'+g.slug) history.replaceState(null,'','#'+g.slug);
   $('#p-close').focus();
 }
 function closePractice(){
-  $('#practice').hidden = true; $('#p-main').innerHTML=''; $('#p-vid').innerHTML=''; document.body.style.overflow='';
+  const pr = $('#practice'); if (pr.hidden) return;
+  const done = () => { pr.hidden = true; pr.classList.remove('closing'); $('#p-main').innerHTML=''; $('#p-vid').innerHTML=''; };
+  pr.classList.remove('opening');
+  if (motionOK) { pr.classList.add('closing'); setTimeout(done, 380); } else done();
+  document.body.style.overflow='';
   history.replaceState(null,'',location.pathname+location.search); cur=null;
+  if (lastFocus && lastFocus.focus) lastFocus.focus();
 }
 $('#p-close').addEventListener('click', closePractice);
 document.addEventListener('keydown', e => { if (e.key==='Escape' && cur) closePractice(); });
@@ -399,13 +425,14 @@ $('#p-src').addEventListener('click', e => { const b=e.target.closest('[data-i]'
 $('#p-vsel').addEventListener('click', e => { const b=e.target.closest('[data-v]'); if(b&&cur) showVideo(cur,+b.dataset.v); });
 $('#pip-size').addEventListener('click', () => { pipState.size=(pipState.size+1)%3; savePip(); applyPip(); });
 $('#pip-move').addEventListener('click', () => { pipState.corner=(pipState.corner+1)%4; savePip(); applyPip(); });
-$('#pip-min').addEventListener('click', e => { const on = !$('#pip').classList.toggle('min') ? false : true; e.currentTarget.setAttribute('aria-pressed', on); e.currentTarget.textContent = on ? 'Mostrar' : 'Ocultar'; });
+$('#pip-min').addEventListener('click', e => { const on = $('#pip').classList.toggle('min'); e.currentTarget.setAttribute('aria-pressed', on); e.currentTarget.textContent = on ? 'Mostrar' : 'Ocultar'; });
 addEventListener('resize', () => { if (cur) applyPip(); });
-$('#list').addEventListener('click', e => { const b=e.target.closest('[data-p]'); if(!b) return; const g=DATA[+b.dataset.p]; if (g) openPractice(g); });
+const activate = el => { const g = DATA[+el.dataset.p]; if (g) openPractice(g, el); };
+$('#list').addEventListener('click', e => { const c=e.target.closest('.card'); if (c) activate(c); });
+$('#list').addEventListener('keydown', e => { const c=e.target.closest('.card'); if (c && (e.key==='Enter'||e.key===' ')) { e.preventDefault(); activate(c); } });
 const fromHash = () => { const h=decodeURIComponent(location.hash.slice(1)); const g=h&&DATA.find(x=>x.slug===h); if (g) openPractice(g); };
 addEventListener('hashchange', fromHash);
 render(); fromHash();
 </script>
-
 </body>
 </html>
